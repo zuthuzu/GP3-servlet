@@ -2,6 +2,7 @@ package ua.kpi.tef.zu.gp3servlet.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.kpi.tef.zu.gp3servlet.controller.command.*;
+import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,11 +24,12 @@ public class Servlet extends HttpServlet {
 	private final static String[] URL_JUNK_TOKENS = new String[] {".*" + DOMAIN, MAPPING, "/", "\\.jsp", "\\.html"};
 
 	private Map<String, Command> commands = new HashMap<>();
+	//private ResourceBundle bundle;
 
 	public void init(ServletConfig servletConfig) {
 		servletConfig.getServletContext().setAttribute("loggedUsers", new HashSet<String>());
 
-		commands.put("index", (request) -> "/index.jsp");
+		commands.put("index", (req) -> "/index.jsp");
 		commands.put("registration", new RegistrationCommand());
 		commands.put("reg", new RegistrationCommand());
 		commands.put("login", new LoginCommand());
@@ -51,10 +53,14 @@ public class Servlet extends HttpServlet {
 		}
 
 		path = digCommandFromURI(path);
-		log.info("Sanitized command from URL: " + path);
-		Command command = commands.getOrDefault(path, commands.get("index"));
+		log.debug("Raw URI: " + request.getRequestURI() + " -> sanitized command from URI: " + path);
+		Command command = commands.getOrDefault(path, redirectToHomePage(request));
 		String page = command.execute(request);
 		request.getRequestDispatcher(page).forward(request, response);
+	}
+
+	private Command redirectToHomePage(HttpServletRequest request) {
+		return (req) -> "redirect:" + (UserSecurity.userLoggedIn(request) ? "lobby" : "");
 	}
 
 	private String digCommandFromURI(String path) {
@@ -67,4 +73,8 @@ public class Servlet extends HttpServlet {
 		Matcher m = Pattern.compile(token).matcher(path);
 		path.replace(0, path.length(), m.replaceAll(""));
 	}
+
+	/*public String getLocalizedText(String token) {
+		return bundle.keySet().contains(token) ? bundle.getString(token) : token;
+	}*/
 }

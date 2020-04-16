@@ -1,6 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
-import ua.kpi.tef.zu.gp3servlet.controller.UserSecurity;
+import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 
 import javax.servlet.http.HttpServletRequest;
 

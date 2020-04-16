@@ -6,8 +6,7 @@
 </head>
 <body>
     <h2>
-       Error Page<br/>
-        <i>Error <%= exception %></i>
+       Error Page
     </h2>
     <br>
     <a href="${pageContext.request.contextPath}/">Back to index</a>

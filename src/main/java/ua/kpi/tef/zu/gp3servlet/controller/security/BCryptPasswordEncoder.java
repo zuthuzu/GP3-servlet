@@ -1,4 +1,4 @@
-package ua.kpi.tef.zu.gp3servlet.controller;
+package ua.kpi.tef.zu.gp3servlet.controller.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;

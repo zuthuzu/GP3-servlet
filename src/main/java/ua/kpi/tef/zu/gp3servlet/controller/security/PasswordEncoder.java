@@ -1,4 +1,4 @@
-package ua.kpi.tef.zu.gp3servlet.controller;
+package ua.kpi.tef.zu.gp3servlet.controller.security;
 
 /**
  * Created by Anton Domin on 2020-04-16
