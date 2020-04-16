@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.controller;
 
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
+import ua.kpi.tef.zu.gp3servlet.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -15,7 +16,7 @@ public class UserSecurity {
 		return (Set<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
 	}
 
-	public static boolean isUserLoggedIn(HttpServletRequest request, String login) {
+	public static boolean userLoggedIn(HttpServletRequest request, String login) {
 		return getLoggedUsers(request).contains(login);
 	}
 
@@ -41,5 +42,10 @@ public class UserSecurity {
 		HttpSession session = request.getSession();
 		session.setAttribute("login", null);
 		session.setAttribute("role", null);
+	}
+
+	public static boolean checkPassword(User user, String password) {
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		return encoder.matches(password, user.getPassword());
 	}
 }

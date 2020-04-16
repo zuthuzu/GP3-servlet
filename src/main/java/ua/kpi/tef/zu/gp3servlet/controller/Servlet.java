@@ -27,13 +27,13 @@ public class Servlet extends HttpServlet {
 	public void init(ServletConfig servletConfig) {
 		servletConfig.getServletContext().setAttribute("loggedUsers", new HashSet<String>());
 
-		commands.put("index" , (request) -> "/index.jsp");
-		commands.put("registration" , new RegistrationCommand());
-		commands.put("reg" , new RegistrationCommand());
-		commands.put("login" , new LoginCommand());
-		commands.put("logout" , new LogoutCommand());
-		commands.put("lobby" , new LobbyCommand());
-		commands.put("error" , new ErrorCommand());
+		commands.put("index", (request) -> "/index.jsp");
+		commands.put("registration", new RegistrationCommand());
+		commands.put("reg", new RegistrationCommand());
+		commands.put("login", new LoginCommand());
+		commands.put("logout", new LogoutCommand());
+		commands.put("lobby", new LobbyCommand());
+		commands.put("error", new ErrorCommand());
 	}
 
 	@Override
