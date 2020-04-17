@@ -1,6 +1,5 @@
 package ua.kpi.tef.zu.gp3servlet.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import ua.kpi.tef.zu.gp3servlet.controller.command.*;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 
@@ -17,13 +16,14 @@ import java.util.regex.Pattern;
 /**
  * Created by Anton Domin on 2020-04-14
  */
-@Slf4j
 public class Servlet extends HttpServlet {
-	private final static String DOMAIN = "/repair"; //pom.xml: tomcat7-maven-plugin configuration
-	private final static String MAPPING = "/"; //web.xml: currently mapped to domain root
-	private final static String[] URL_JUNK_TOKENS = new String[] {".*" + DOMAIN, MAPPING, "/", "\\.jsp", "\\.html"};
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Servlet.class);
 
-	private Map<String, Command> commands = new HashMap<>();
+	private static final String DOMAIN = "/repair"; //pom.xml: tomcat7-maven-plugin configuration
+	private static final String MAPPING = "/"; //web.xml: currently mapped to domain root
+	private static final String[] URL_JUNK_TOKENS = new String[] {".*" + DOMAIN, MAPPING, "/", "\\.jsp", "\\.html"};
+
+	private final Map<String, Command> commands = new HashMap<>();
 	//private ResourceBundle bundle;
 
 	public void init(ServletConfig servletConfig) {

@@ -1,18 +1,16 @@
 package ua.kpi.tef.zu.gp3servlet.controller.security;
 
-import lombok.extern.slf4j.Slf4j;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.security.SecureRandom;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Simplified copy of Spring implementation
  */
-@Slf4j
 public class BCryptPasswordEncoder implements PasswordEncoder {
-	private Pattern BCRYPT_PATTERN;
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(BCryptPasswordEncoder.class);
+	private final Pattern BCRYPT_PATTERN;
 	private final int strength;
 	private final SecureRandom random;
 
@@ -52,21 +50,6 @@ public class BCryptPasswordEncoder implements PasswordEncoder {
 				return false;
 			} else {
 				return BCrypt.checkpw(rawPassword.toString(), encodedPassword);
-			}
-		} else {
-			log.warn("Empty encoded password");
-			return false;
-		}
-	}
-
-	public boolean upgradeEncoding(String encodedPassword) {
-		if (encodedPassword != null && encodedPassword.length() != 0) {
-			Matcher matcher = this.BCRYPT_PATTERN.matcher(encodedPassword);
-			if (!matcher.matches()) {
-				throw new IllegalArgumentException("Encoded password does not look like BCrypt: " + encodedPassword);
-			} else {
-				int strength = Integer.parseInt(matcher.group(2));
-				return strength < this.strength;
 			}
 		} else {
 			log.warn("Empty encoded password");

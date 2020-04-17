@@ -1,7 +1,5 @@
 package ua.kpi.tef.zu.gp3servlet.controller.filters;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -10,8 +8,9 @@ import java.io.IOException;
 /**
  * Created by Anton Domin on 2020-04-14
  */
-@Slf4j
 public class AuthFilter implements Filter {
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AuthFilter.class);
+
 	@Override
 	public void init(FilterConfig filterConfig) {
 

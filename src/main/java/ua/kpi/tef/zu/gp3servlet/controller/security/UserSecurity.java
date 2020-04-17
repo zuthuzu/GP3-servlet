@@ -38,8 +38,8 @@ public class UserSecurity {
 		loggedUsers.remove(login);
 
 		HttpSession session = request.getSession();
-		session.setAttribute("login", null);
-		session.setAttribute("role", null);
+		session.removeAttribute("login");
+		session.removeAttribute("role");
 	}
 
 	@SuppressWarnings("unchecked")

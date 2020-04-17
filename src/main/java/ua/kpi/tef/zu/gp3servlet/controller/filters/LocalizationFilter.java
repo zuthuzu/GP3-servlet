@@ -1,6 +1,5 @@
 package ua.kpi.tef.zu.gp3servlet.controller.filters;
 
-import lombok.extern.slf4j.Slf4j;
 import ua.kpi.tef.zu.gp3servlet.controller.SupportedLanguages;
 
 import javax.servlet.*;
@@ -13,7 +12,6 @@ import java.util.ResourceBundle;
 /**
  * Created by Anton Domin on 2020-04-16
  */
-@Slf4j
 public class LocalizationFilter implements Filter {
 	private static final String BUNDLE_NAME = "messages";
 

@@ -11,8 +11,8 @@ public enum SupportedLanguages {
 	ENGLISH("en", "English"),
 	RUSSIAN("ru", "Русский");
 
-	private String code;
-	private String name;
+	private final String code;
+	private final String name;
 
 	SupportedLanguages(String code, String name) {
 		this.code = code;

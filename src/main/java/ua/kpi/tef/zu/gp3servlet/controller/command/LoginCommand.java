@@ -1,6 +1,5 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
-import lombok.extern.slf4j.Slf4j;
 import ua.kpi.tef.zu.gp3servlet.controller.*;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
@@ -11,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by Anton Domin on 2020-04-14
  */
-@Slf4j
 public class LoginCommand implements Command {
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginCommand.class);
 	private final UserService userService;
 
 	public LoginCommand() {
