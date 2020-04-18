@@ -11,6 +11,6 @@ public class LogoutCommand implements Command {
 	@Override
 	public String execute(HttpServletRequest request) {
 		UserSecurity.removeLoggedUser(request.getSession());
-		return "redirect:";
+		return "redirect:?logout";
 	}
 }

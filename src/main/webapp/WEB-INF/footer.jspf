@@ -1,0 +1,7 @@
+    <div class="row bg-light">
+        <div class="col small text-center">
+            <fmt:message key="general.privacy" />
+            <br />
+            <fmt:message key="general.copyright" />
+        </div>
+    </div>

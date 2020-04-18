@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
  * Created by Anton Domin on 2020-04-18
  */
 public class MappingUtility {
-	public static final String DOMAIN = "/repair"; //pom.xml: tomcat7-maven-plugin configuration
-	public static final String MAPPING = "/app"; //web.xml
+	public static final String DOMAIN = "/repair"; //pom.xml: from tomcat7-maven-plugin configuration
+	public static final String MAPPING = "/app"; //web.xml: front controller serves empty map, everything else is here
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",
 			".*" + DOMAIN,
@@ -31,8 +31,8 @@ public class MappingUtility {
 	private static final Map<RoleType, Set<String>> allowedCommands = new HashMap<>();
 
 	static {
-		allowedCommands.put(null,
-				new HashSet<>(Arrays.asList("", "index", "reg", "login"))); //GUEST
+		allowedCommands.put(null, //GUEST
+				new HashSet<>(Arrays.asList("", "index", "reg", "newuser", "login")));
 		allowedCommands.put(RoleType.ROLE_USER,
 				new HashSet<>(Arrays.asList("lobby", "logout")));
 		allowedCommands.put(RoleType.ROLE_MANAGER,
@@ -44,8 +44,9 @@ public class MappingUtility {
 	}
 
 	public static void initializeCommands(Map<String, Command> commands) {
-		commands.put("index", (req) -> "/index.jsp");
+		commands.put("index", new IndexCommand());
 		commands.put("reg", new RegistrationCommand());
+		commands.put("newuser", new NewUserCommand());
 		commands.put("login", new LoginCommand());
 		commands.put("logout", new LogoutCommand());
 		commands.put("lobby", new LobbyCommand());

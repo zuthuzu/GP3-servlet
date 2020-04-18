@@ -12,7 +12,7 @@ import java.util.Locale;
  * Created by Anton Domin on 2020-04-16
  */
 public class LocalizationFilter implements Filter {
-	private static final String CURRENT_LANGUAGE = "langCode";
+	private static final String CURRENT_LANGUAGE = "locale";
 	private static final String SUPPORTED_LANGUAGES = "supported";
 	private static final String LOCALE_SWITCH_PARAMETER = "l";
 
