@@ -1,7 +1,7 @@
 <%@ page pageEncoding="UTF-8"%>
     <div class="row bg-light">
         <div class="col-sm-8">
-            <a class="text-dark" href="/"><h1><fmt:message key="header.brand" /></h1></a>
+            <a class="text-dark" href="${pageContext.request.contextPath}/"><h1><fmt:message key="header.brand" /></h1></a>
         </div>
         <div class="col p-2 d-flex justify-content-end">
             <div class="dropdown show">
@@ -26,7 +26,7 @@
                 </button>
 
                 <div class="dropdown-menu">
-                    <form method="post" class="px-4 py-3" action="${pageContext.request.contextPath}/login">
+                    <form method="post" class="px-4 py-3" action="${pageContext.request.contextPath}/app/login">
                         <div class="form-group">
                             <label for="username"><fmt:message key="login.login" /></label>
                             <input class="form-control" type="text" id="login" name="login">
@@ -43,7 +43,7 @@
                     <div class="dropdown-item">
                         <fmt:message key="index.register.label" />
                         <br/>
-                        <a href="/reg"><fmt:message key="index.register.link" /></a>
+                        <a href="${pageContext.request.contextPath}/app/reg"><fmt:message key="index.register.link" /></a>
                     </div>
                 </div>
             </div>

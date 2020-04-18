@@ -7,12 +7,9 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GP3servlet</servlet-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern/>
+    <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
-
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
 
   <error-page>
     <exception-type>java.lang.Exception</exception-type>
@@ -23,12 +20,16 @@
     <session-timeout>30</session-timeout>
   </session-config>
 
+  <listener>
+    <listener-class>ua.kpi.tef.zu.gp3servlet.controller.security.SessionListener</listener-class>
+  </listener>
+
   <filter>
-    <filter-name>EncodingFilter</filter-name>
-    <filter-class>ua.kpi.tef.zu.gp3servlet.controller.filters.EncodingFilter</filter-class>
+    <filter-name>MappingFilter</filter-name>
+    <filter-class>ua.kpi.tef.zu.gp3servlet.controller.filters.MappingFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>EncodingFilter</filter-name>
+    <filter-name>MappingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -38,6 +39,15 @@
   </filter>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>ua.kpi.tef.zu.gp3servlet.controller.filters.EncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 

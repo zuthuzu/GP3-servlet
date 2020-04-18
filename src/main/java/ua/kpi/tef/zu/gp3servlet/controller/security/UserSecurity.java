@@ -3,48 +3,57 @@ package ua.kpi.tef.zu.gp3servlet.controller.security;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by Anton Domin on 2020-04-14
  */
 public class UserSecurity {
-	public static boolean userLoggedIn(HttpServletRequest request) {
-		return request.getSession().getAttribute("login") != null;
+	private static final String ALL_USERS = "loggedUsers";
+	private static final String CURRENT_USER = "user";
+
+	public static boolean userLoggedIn(HttpSession session) {
+		return session.getAttribute(CURRENT_USER) != null;
 	}
 
-	public static boolean userLoggedIn(HttpServletRequest request, String login) {
-		return getLoggedUsers(request).contains(login);
+	public static boolean userLoggedIn(HttpSession session, String login) {
+		return getLoggedUsers(session).contains(login);
 	}
 
-	public static void addLoggedUser(HttpServletRequest request, String login, RoleType role) {
-		Set<String> loggedUsers = getLoggedUsers(request);
-		loggedUsers.add(login);
-
-		HttpSession session = request.getSession();
-		session.setAttribute("login", login);
-		session.setAttribute("role", role);
+	public static User getCurrentUser(HttpSession session) {
+		return (User) session.getAttribute(CURRENT_USER);
 	}
 
-	public static void removeLoggedUser(HttpServletRequest request) {
-		String currentUser = (String) request.getSession().getAttribute("login");
-		if (currentUser != null) removeLoggedUser(request, currentUser);
+	public static RoleType getCurrentRole(HttpSession session) {
+		User user = (User) session.getAttribute(CURRENT_USER);
+		return user == null ? null : user.getRole();
 	}
 
-	public static void removeLoggedUser(HttpServletRequest request, String login) {
-		Set<String> loggedUsers = getLoggedUsers(request);
-		loggedUsers.remove(login);
+	public static void addLoggedUser(HttpSession session, User user) {
+		getLoggedUsers(session).add(user.getLogin());
+		session.setAttribute(CURRENT_USER, user);
+	}
 
-		HttpSession session = request.getSession();
-		session.removeAttribute("login");
-		session.removeAttribute("role");
+	public static void removeLoggedUser(HttpSession session) {
+		User user = (User) session.getAttribute(CURRENT_USER);
+		if (user != null) removeLoggedUser(session, user.getLogin());
+	}
+
+	public static void removeLoggedUser(HttpSession session, String login) {
+		getLoggedUsers(session).remove(login);
+		session.removeAttribute(CURRENT_USER);
+	}
+
+	public static void initializeLoggedUsers(ServletContext context) {
+		context.setAttribute(ALL_USERS, new HashSet<String>());
 	}
 
 	@SuppressWarnings("unchecked")
-	private static Set<String> getLoggedUsers(HttpServletRequest request) {
-		return (Set<String>) request.getSession().getServletContext().getAttribute("loggedUsers");
+	public static Set<String> getLoggedUsers(HttpSession session) {
+		return (Set<String>) session.getServletContext().getAttribute(ALL_USERS);
 	}
 
 	public static boolean checkPassword(User user, String password) {

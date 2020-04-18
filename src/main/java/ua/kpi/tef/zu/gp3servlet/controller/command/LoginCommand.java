@@ -2,6 +2,7 @@ package ua.kpi.tef.zu.gp3servlet.controller.command;
 
 import ua.kpi.tef.zu.gp3servlet.controller.*;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
+import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.service.UserService;
 
@@ -20,8 +21,9 @@ public class LoginCommand implements Command {
 
 	@Override
 	public String execute(HttpServletRequest request) {
+		RoleType result;
 		try {
-			attemptLogin(request);
+			result = attemptLogin(request);
 		} catch (SecurityException e) {
 			log.warn(e.getMessage());
 			return "redirect:?error";
@@ -29,14 +31,13 @@ public class LoginCommand implements Command {
 			log.error(e.getMessage());
 			return "redirect:?error";
 		}
-		return "redirect:lobby";
+		return "redirect:" + MappingUtility.getDefaultCommand(result);
 	}
 
-	private void attemptLogin(HttpServletRequest request)
+	private RoleType attemptLogin(HttpServletRequest request)
 			throws DatabaseException, IllegalArgumentException, SecurityException {
 		String login = request.getParameter("login");
 		String password = request.getParameter("password");
-		log.debug("Login request received: " + login + ":" + password); //TODO: disable logging user passwords, lol
 
 		checkLogin(login);
 		checkAlreadyLoggedIn(request, login);
@@ -44,7 +45,10 @@ public class LoginCommand implements Command {
 		User user = userService.findByLogin(login);
 		checkPassword(user, password);
 
-		UserSecurity.addLoggedUser(request, login, user.getRole());
+		UserSecurity.addLoggedUser(request.getSession(), user);
+		log.info("User logged in: " + login);
+
+		return user.getRole();
 	}
 
 	private void checkLogin(String login) throws IllegalArgumentException {
@@ -56,7 +60,7 @@ public class LoginCommand implements Command {
 	}
 
 	private void checkAlreadyLoggedIn(HttpServletRequest request, String login) {
-		if (UserSecurity.userLoggedIn(request, login))
+		if (UserSecurity.userLoggedIn(request.getSession(), login))
 			throw new SecurityException("Login failed: user already logged in: " + login);
 	}
 

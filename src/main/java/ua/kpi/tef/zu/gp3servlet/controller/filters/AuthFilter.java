@@ -1,8 +1,12 @@
 package ua.kpi.tef.zu.gp3servlet.controller.filters;
 
+import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
+import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
+import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -21,13 +25,16 @@ public class AuthFilter implements Filter {
 			throws IOException, ServletException {
 
 		final HttpServletRequest req = (HttpServletRequest) servletRequest;
-		HttpSession session = req.getSession();
-		ServletContext context = req.getServletContext();
-		log.debug("AUTH: current session login: " + session.getAttribute("login") +
-				", role: " + session.getAttribute("role") +
-				", global context user pool: " + context.getAttribute("loggedUsers"));
+		final HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
-		filterChain.doFilter(servletRequest, servletResponse);
+		RoleType role = UserSecurity.getCurrentRole(req.getSession());
+		if (MappingUtility.canAccess(role, req.getRequestURI())) {
+			filterChain.doFilter(servletRequest, servletResponse);
+		} else {
+			//req.getRequestDispatcher("redirect:" + MappingUtility.getAccessDeniedPage(role)).forward(req, resp);
+			resp.sendRedirect(MappingUtility.getAccessDeniedPage(role));
+			log.warn("AUTH: access denied at " + req.getRequestURI());
+		}
 	}
 
 	@Override

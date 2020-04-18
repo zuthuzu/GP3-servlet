@@ -1,6 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.controller;
 
-import ua.kpi.tef.zu.gp3servlet.controller.command.*;
+import ua.kpi.tef.zu.gp3servlet.controller.command.Command;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 
 import javax.servlet.ServletConfig;
@@ -10,32 +10,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Anton Domin on 2020-04-14
  */
 public class Servlet extends HttpServlet {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Servlet.class);
-
-	private static final String DOMAIN = "/repair"; //pom.xml: tomcat7-maven-plugin configuration
-	private static final String MAPPING = "/"; //web.xml: currently mapped to domain root
-	private static final String[] URL_JUNK_TOKENS = new String[] {".*" + DOMAIN, MAPPING, "/", "\\.jsp", "\\.html"};
-
 	private final Map<String, Command> commands = new HashMap<>();
 	//private ResourceBundle bundle;
 
 	public void init(ServletConfig servletConfig) {
-		servletConfig.getServletContext().setAttribute("loggedUsers", new HashSet<String>());
-
-		commands.put("index", (req) -> "/index.jsp");
-		commands.put("registration", new RegistrationCommand());
-		commands.put("reg", new RegistrationCommand());
-		commands.put("login", new LoginCommand());
-		commands.put("logout", new LogoutCommand());
-		commands.put("lobby", new LobbyCommand());
-		commands.put("error", new ErrorCommand());
+		UserSecurity.initializeLoggedUsers(servletConfig.getServletContext());
+		MappingUtility.initializeCommands(commands);
 	}
 
 	@Override
@@ -47,31 +33,19 @@ public class Servlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		String path = request.getRequestURI();
+		String query = request.getQueryString();
+
 		if (path.contains("redirect:")) {
-			response.sendRedirect(path.replace("redirect:", ""));
+			path = path.replace("redirect:", "") + (query == null ? "" : "?" + query);
+			response.sendRedirect(path);
 			return;
 		}
 
-		path = digCommandFromURI(path);
+		path = MappingUtility.digCommandFromURI(path);
 		log.debug("Raw URI: " + request.getRequestURI() + " -> sanitized command from URI: " + path);
-		Command command = commands.getOrDefault(path, redirectToHomePage(request));
+		Command command = commands.getOrDefault(path, commands.get("index"));
 		String page = command.execute(request);
 		request.getRequestDispatcher(page).forward(request, response);
-	}
-
-	private Command redirectToHomePage(HttpServletRequest request) {
-		return (req) -> "redirect:" + (UserSecurity.userLoggedIn(request) ? "lobby" : "");
-	}
-
-	private String digCommandFromURI(String path) {
-		StringBuilder result = new StringBuilder(path);
-		Arrays.stream(URL_JUNK_TOKENS).forEach(jt -> stripToken(result, jt));
-		return result.toString();
-	}
-
-	private void stripToken(StringBuilder path, String token) {
-		Matcher m = Pattern.compile(token).matcher(path);
-		path.replace(0, path.length(), m.replaceAll(""));
 	}
 
 	/*public String getLocalizedText(String token) {
