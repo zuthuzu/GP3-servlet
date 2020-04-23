@@ -41,8 +41,8 @@ public class Servlet extends HttpServlet {
 		}
 
 		path = MappingUtility.digCommandFromURI(path);
-		log.debug("Raw URI: " + request.getRequestURI() + " -> sanitized command from URI: " + path);
-		Command command = commands.getOrDefault(path, commands.get("index"));
+		log.debug("MAIN: raw URI: " + request.getRequestURI() + " -> sanitized command from URI: " + path);
+		Command command = commands.getOrDefault(path, commands.get(MappingUtility.C_INDEX));
 		String page = command.execute(request);
 		request.getRequestDispatcher(page).forward(request, response);
 	}

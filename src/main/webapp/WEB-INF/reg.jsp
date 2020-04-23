@@ -46,7 +46,7 @@
                             <span id="nameCheck">✅</span>
                             <span id="nameFail">❌</span>
                         </label>
-                        <input class="form-control" type="text" id="name" name="name"
+                        <input class="form-control" type="text" id="name" name="name" value="${name}"
                             placeholder="<fmt:message key="reg.name" />" required>
                     </div>
                     <div class="form-group">
@@ -56,7 +56,7 @@
                             <span id="loginCheck">✅</span>
                             <span id="loginFail">❌</span>
                         </label>
-                        <input class="form-control" type="text" id="login" name="login"
+                        <input class="form-control" type="text" id="login" name="login" value="${login}"
                             placeholder="<fmt:message key="login.login" />" required>
                     </div>
                     <div class="form-group">

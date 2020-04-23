@@ -33,7 +33,7 @@ public class LoginCommand implements Command {
 			log.error(e.getMessage());
 		}
 		return MappingUtility.getRedirectToDefault(result)
-				+ (result == null ? "?" + MappingUtility.PARAM_LOGIN_ERROR : "");
+				+ (result == null ? "?" + MappingUtility.PARAM_GENERIC_ERROR : "");
 	}
 
 	private RoleType attemptLogin(HttpServletRequest request)

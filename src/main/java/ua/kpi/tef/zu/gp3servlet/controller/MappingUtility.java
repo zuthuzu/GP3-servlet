@@ -14,8 +14,18 @@ public class MappingUtility {
 	public static final String DOMAIN = "/repair"; //pom.xml: from tomcat7-maven-plugin configuration
 	public static final String MAPPING = "/app"; //web.xml: front controller serves empty map, everything else is here
 	public static final String REDIRECT = "redirect:";
+
+	public static final String C_INDEX = "index";
+	public static final String C_REG = "reg";
+	public static final String C_NEW_USER = "newuser";
+	public static final String C_LOGIN = "login";
+	public static final String C_LOGOUT = "logout";
+	public static final String C_LOBBY = "lobby";
+	public static final String C_USERS = "users";
+
 	public static final String PARAM_LOCALE_SWITCH = "l";
-	public static final String PARAM_LOGIN_ERROR = "error";
+	public static final String PARAM_ACCESS_DENIED = "denied";
+	public static final String PARAM_GENERIC_ERROR = "error";
 	public static final String PARAM_LOGOUT_OK = "logout";
 	public static final String PARAM_REG_OK = "reg";
 
@@ -38,25 +48,26 @@ public class MappingUtility {
 
 	static {
 		allowedCommands.put(null, //GUEST
-				new HashSet<>(Arrays.asList("", "index", "reg", "newuser", "login")));
+				new HashSet<>(Arrays.asList("", C_INDEX, C_REG, C_NEW_USER, C_LOGIN)));
 		allowedCommands.put(RoleType.ROLE_USER,
-				new HashSet<>(Arrays.asList("lobby", "logout")));
+				new HashSet<>(Arrays.asList(C_LOBBY, C_LOGOUT)));
 		allowedCommands.put(RoleType.ROLE_MANAGER,
-				new HashSet<>(Arrays.asList("lobby", "logout")));
+				new HashSet<>(Arrays.asList(C_LOBBY, C_LOGOUT)));
 		allowedCommands.put(RoleType.ROLE_MASTER,
-				new HashSet<>(Arrays.asList("lobby", "logout")));
+				new HashSet<>(Arrays.asList(C_LOBBY, C_LOGOUT)));
 		allowedCommands.put(RoleType.ROLE_ADMIN,
-				new HashSet<>(Arrays.asList("users", "logout")));
+				new HashSet<>(Arrays.asList(C_USERS, C_LOGOUT)));
 	}
 
 	public static void initializeCommands(Map<String, Command> commands) {
-		commands.put("index", new IndexCommand());
-		commands.put("reg", new RegistrationCommand());
-		commands.put("newuser", new NewUserCommand());
-		commands.put("login", new LoginCommand());
-		commands.put("logout", new LogoutCommand());
-		commands.put("lobby", new LobbyCommand());
-		commands.put("users", new UsersCommand());
+		commands.put(C_INDEX, new IndexCommand());
+		commands.put(C_REG, new RegistrationCommand());
+		commands.put(C_NEW_USER, new NewUserCommand());
+		commands.put(C_LOGIN, new LoginCommand());
+		commands.put(C_LOGOUT, new LogoutCommand());
+		commands.put(C_LOBBY, new LobbyCommand());
+		commands.put(C_USERS, new UsersCommand());
+		//TODO proper error mapping, one way or another
 		commands.put("error", new ErrorCommand());
 	}
 
@@ -68,7 +79,7 @@ public class MappingUtility {
 	}
 
 	public static String getAccessDeniedPage(RoleType role) {
-		return DOMAIN + MAPPING + "/" + getDefaultCommand(role) + "?denied";
+		return DOMAIN + MAPPING + "/" + getDefaultCommand(role) + "?" + PARAM_ACCESS_DENIED;
 	}
 
 	public static String getRedirectToDefault(RoleType role) {
@@ -76,7 +87,7 @@ public class MappingUtility {
 	}
 
 	public static String getDefaultCommand(RoleType role) {
-		return role == null ? "" : (role == RoleType.ROLE_ADMIN ? "users" : "lobby");
+		return role == null ? "" : (role == RoleType.ROLE_ADMIN ? C_USERS : C_LOBBY);
 	}
 
 	public static boolean needsRemap(String path) {

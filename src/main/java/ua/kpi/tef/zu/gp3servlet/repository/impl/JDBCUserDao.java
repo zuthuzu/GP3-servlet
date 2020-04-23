@@ -22,20 +22,26 @@ public class JDBCUserDao implements UserDao {
 
 	@Override
 	public void create(User entity) {
+		//TODO transactional hibernate_sequence read into entity.id
+		//insert(entity);
+	}
+
+	private void insert(User entity) {
 		try (PreparedStatement ps = connection.prepareStatement
-				("INSERT INTO `" + TABLE + "` (`login`, `name`, `role`, `email`, `phone`, `password`, " +
+				("INSERT INTO `" + TABLE + "` (`id`, `login`, `name`, `role`, `email`, `phone`, `password`, " +
 						"`accountNonExpired`, `accountNonLocked`, `credentialsNonExpired`, `enabled`" +
-						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-			ps.setString(1, entity.getLogin());
-			ps.setString(2, entity.getName());
-			ps.setString(3, entity.getRole().toString());
-			ps.setString(4, entity.getEmail());
-			ps.setString(5, entity.getPhone());
-			ps.setString(6, entity.getPassword());
-			ps.setBoolean(7, true);
+						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+			ps.setInt(1, entity.getId());
+			ps.setString(2, entity.getLogin());
+			ps.setString(3, entity.getName());
+			ps.setString(4, entity.getRole().toString());
+			ps.setString(5, entity.getEmail());
+			ps.setString(6, entity.getPhone());
+			ps.setString(7, entity.getPassword());
 			ps.setBoolean(8, true);
 			ps.setBoolean(9, true);
 			ps.setBoolean(10, true);
+			ps.setBoolean(11, true);
 			ps.executeUpdate();
 		} catch (Exception ignored) {
 
@@ -68,13 +74,15 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	private User extractFromResultSet(ResultSet rs) throws SQLException {
-		return new User(rs.getInt("id"),
-				rs.getString("login"),
-				rs.getString("name"),
-				RoleType.valueOf(rs.getString("role")),
-				rs.getString("email"),
-				rs.getString("phone"),
-				rs.getString("password"));
+		return User.builder()
+				.id(rs.getInt("id"))
+				.login(rs.getString("login"))
+				.name(rs.getString("name"))
+				.role(RoleType.valueOf(rs.getString("role")))
+				.email(rs.getString("email"))
+				.phone(rs.getString("phone"))
+				.password(rs.getString("password"))
+				.build();
 	}
 
 	@Override
