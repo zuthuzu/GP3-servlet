@@ -1,5 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.controller.filters;
 
+import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.SupportedLanguages;
 
 import javax.servlet.*;
@@ -14,7 +15,6 @@ import java.util.Locale;
 public class LocalizationFilter implements Filter {
 	private static final String CURRENT_LANGUAGE = "locale";
 	private static final String SUPPORTED_LANGUAGES = "supported";
-	private static final String LOCALE_SWITCH_PARAMETER = "l";
 
 	@Override
 	public void init(FilterConfig filterConfig) {
@@ -28,7 +28,7 @@ public class LocalizationFilter implements Filter {
 		final HttpServletRequest req = (HttpServletRequest) servletRequest;
 		HttpSession session = req.getSession();
 
-		String langSwitch = req.getParameter(LOCALE_SWITCH_PARAMETER);
+		String langSwitch = req.getParameter(MappingUtility.PARAM_LOCALE_SWITCH);
 		if (langSwitch == null) setDefaultsIfMissing(session);
 		else setLocale(session, langSwitch);
 

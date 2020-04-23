@@ -7,7 +7,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GP3servlet</servlet-name>
-    <url-pattern/>
     <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
 

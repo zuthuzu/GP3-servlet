@@ -17,7 +17,6 @@ import java.util.*;
 public class Servlet extends HttpServlet {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Servlet.class);
 	private final Map<String, Command> commands = new HashMap<>();
-	//private ResourceBundle bundle;
 
 	public void init(ServletConfig servletConfig) {
 		UserSecurity.initializeLoggedUsers(servletConfig.getServletContext());
@@ -35,8 +34,8 @@ public class Servlet extends HttpServlet {
 		String path = request.getRequestURI();
 		String query = request.getQueryString();
 
-		if (path.contains("redirect:")) {
-			path = path.replace("redirect:", "") + (query == null ? "" : "?" + query);
+		if (path.contains(MappingUtility.REDIRECT)) {
+			path = path.replace(MappingUtility.REDIRECT, "") + (query == null ? "" : "?" + query);
 			response.sendRedirect(path);
 			return;
 		}
@@ -47,8 +46,4 @@ public class Servlet extends HttpServlet {
 		String page = command.execute(request);
 		request.getRequestDispatcher(page).forward(request, response);
 	}
-
-	/*public String getLocalizedText(String token) {
-		return bundle.keySet().contains(token) ? bundle.getString(token) : token;
-	}*/
 }

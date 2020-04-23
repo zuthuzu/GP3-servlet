@@ -31,7 +31,6 @@ public class AuthFilter implements Filter {
 		if (MappingUtility.canAccess(role, req.getRequestURI())) {
 			filterChain.doFilter(servletRequest, servletResponse);
 		} else {
-			//req.getRequestDispatcher("redirect:" + MappingUtility.getAccessDeniedPage(role)).forward(req, resp);
 			resp.sendRedirect(MappingUtility.getAccessDeniedPage(role));
 			log.warn("AUTH: access denied at " + req.getRequestURI());
 		}

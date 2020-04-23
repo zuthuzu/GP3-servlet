@@ -1,5 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
+import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -11,6 +13,6 @@ public class NewUserCommand implements Command {
 	@Override
 	public String execute(HttpServletRequest request) {
 		log.debug("NEW USER REQUEST: " + request.getParameterMap());
-		return "redirect:?reg";
+		return MappingUtility.getRedirectToDefault(null) + "?" + MappingUtility.PARAM_REG_OK;
 	}
 }

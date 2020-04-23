@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class LoginCommand implements Command {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginCommand.class);
+	private static final String PARAM_LOGIN = "login";
+	private static final String PARAM_PASSWORD = "password";
+
 	private final UserService userService;
 
 	public LoginCommand() {
@@ -21,23 +24,22 @@ public class LoginCommand implements Command {
 
 	@Override
 	public String execute(HttpServletRequest request) {
-		RoleType result;
+		RoleType result = null;
 		try {
 			result = attemptLogin(request);
 		} catch (SecurityException e) {
 			log.warn(e.getMessage());
-			return "redirect:?error";
 		} catch (DatabaseException | IllegalArgumentException e) {
 			log.error(e.getMessage());
-			return "redirect:?error";
 		}
-		return "redirect:" + MappingUtility.getDefaultCommand(result);
+		return MappingUtility.getRedirectToDefault(result)
+				+ (result == null ? "?" + MappingUtility.PARAM_LOGIN_ERROR : "");
 	}
 
 	private RoleType attemptLogin(HttpServletRequest request)
 			throws DatabaseException, IllegalArgumentException, SecurityException {
-		String login = request.getParameter("login");
-		String password = request.getParameter("password");
+		String login = request.getParameter(PARAM_LOGIN);
+		String password = request.getParameter(PARAM_PASSWORD);
 
 		checkLogin(login);
 		checkAlreadyLoggedIn(request, login);

@@ -13,6 +13,12 @@ import java.util.regex.Pattern;
 public class MappingUtility {
 	public static final String DOMAIN = "/repair"; //pom.xml: from tomcat7-maven-plugin configuration
 	public static final String MAPPING = "/app"; //web.xml: front controller serves empty map, everything else is here
+	public static final String REDIRECT = "redirect:";
+	public static final String PARAM_LOCALE_SWITCH = "l";
+	public static final String PARAM_LOGIN_ERROR = "error";
+	public static final String PARAM_LOGOUT_OK = "logout";
+	public static final String PARAM_REG_OK = "reg";
+
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",
 			".*" + DOMAIN,
@@ -63,6 +69,10 @@ public class MappingUtility {
 
 	public static String getAccessDeniedPage(RoleType role) {
 		return DOMAIN + MAPPING + "/" + getDefaultCommand(role) + "?denied";
+	}
+
+	public static String getRedirectToDefault(RoleType role) {
+		return REDIRECT + getDefaultCommand(role);
 	}
 
 	public static String getDefaultCommand(RoleType role) {
