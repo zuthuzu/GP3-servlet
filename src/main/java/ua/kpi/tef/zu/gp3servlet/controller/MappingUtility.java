@@ -14,6 +14,7 @@ public class MappingUtility {
 	public static final String DOMAIN = "/repair"; //pom.xml: from tomcat7-maven-plugin configuration
 	public static final String MAPPING = "/app"; //web.xml: front controller serves empty map, everything else is here
 	public static final String REDIRECT = "redirect:";
+	public static final String REJECTED_ENTITY = "rejected";
 
 	public static final String C_INDEX = "index";
 	public static final String C_REG = "reg";

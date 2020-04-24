@@ -66,7 +66,7 @@
                             <span id="phoneCheck">✅</span>
                             <span id="phoneFail">❌</span>
                         </label>
-                        <input class="form-control" type="text" id="phone" name="phone"
+                        <input class="form-control" type="text" id="phone" name="phone" value="${phone}"
                             placeholder="<fmt:message key="reg.phone" />" required>
                     </div>
                     <div class="form-group">
@@ -76,7 +76,7 @@
                             <span id="emailCheck">✅</span>
                             <span id="emailFail">❌</span>
                         </label>
-                        <input class="form-control" type="email" id="email" name="email"
+                        <input class="form-control" type="email" id="email" name="email" value="${email}"
                             placeholder="<fmt:message key="reg.email" />">
                     </div>
                     <div class="form-group">

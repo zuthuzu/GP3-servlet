@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * Created by Anton Domin on 2020-04-18
+ * Created by Anton Domin on 2020-04-24
  */
 public class NewUserCommand implements Command {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NewUserCommand.class);
@@ -28,9 +28,9 @@ public class NewUserCommand implements Command {
 			userService.saveNewUser(user);
 			return MappingUtility.getRedirectToDefault(null) + "?" + MappingUtility.PARAM_REG_OK;
 		} catch (Exception e) {
-			//TODO 1. distinguish duplicate fields and other exs
-			//TODO 2. retain object fields through redirect (via session?)
-			log.error("EXCEPTION: " + e);
+			log.error("EXCEPTION: " + e.getMessage());
+			request.getSession().setAttribute(MappingUtility.REJECTED_ENTITY, user);
+			//TODO distinguish duplicate fields and other exs
 			return MappingUtility.REDIRECT + MappingUtility.C_REG + "?" + MappingUtility.PARAM_GENERIC_ERROR;
 		}
 	}

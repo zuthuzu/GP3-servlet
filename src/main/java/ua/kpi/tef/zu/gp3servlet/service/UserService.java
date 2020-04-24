@@ -23,28 +23,33 @@ public class UserService {
 		return dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
 	}
 
-	public void saveNewUser(User user) throws DatabaseException, IllegalArgumentException {
-		if (!verifyUserFields(user)) throw new IllegalArgumentException("Malformed data in entity: " + user);
+	public void saveNewUser(User frontUser) throws DatabaseException, IllegalArgumentException {
+		if (!verifyUserFields(frontUser)) throw new IllegalArgumentException("Malformed data in entity: " + frontUser);
 
 		PasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		user.setPhone(cleanPhoneNumber(user.getPhone()));
-		user.setEmail(user.getEmail().isEmpty() ? user.getLogin() + DEFAULT_EMAIL_DOMAIN : user.getEmail());
-		user.setPassword(encoder.encode(user.getPassword()));
-		user.setRole(RoleType.ROLE_USER);
+		User completeUser = User.builder()
+				.login(frontUser.getLogin())
+				.name(frontUser.getName())
+				.role(RoleType.ROLE_USER)
+				.phone(cleanPhoneNumber(frontUser.getPhone()))
+				.email(frontUser.getEmail().isEmpty() ? frontUser.getLogin() + DEFAULT_EMAIL_DOMAIN : frontUser.getEmail())
+				.password(encoder.encode(frontUser.getPassword()))
+				.build();
 
-		saveUser(user);
-		log.info("New user created: " + user);
+		saveUser(completeUser);
+		log.info("New user created: " + completeUser);
 	}
 
 	private void saveUser(User user) throws DatabaseException {
-		DaoFactory factory = DaoFactory.getInstance();
+		throw new DatabaseException("Couldn't save a user: " + user);
+		/*DaoFactory factory = DaoFactory.getInstance();
 		UserDao dao = factory.createUserDao();
 		try {
 			dao.create(user);
 		} catch (Exception e) {
 			throw new DatabaseException("Couldn't save a user: " + user, e);
-		}
+		}*/
 	}
 
 	private boolean verifyUserFields(User user) {
