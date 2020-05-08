@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  * Created by Anton Domin on 2020-04-14
  */
 public class RegistrationCommand implements Command {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RegistrationCommand.class);
-
 	@Override
 	public String execute(HttpServletRequest request) {
 		setUserAttributes(request);
@@ -24,10 +22,10 @@ public class RegistrationCommand implements Command {
 	private void setUserAttributes(HttpServletRequest request) {
 		User user = getUserFromSession(request);
 		if (user != null) {
-			request.setAttribute("name", user.getName());
-			request.setAttribute("login", user.getLogin());
-			request.setAttribute("phone", user.getPhone());
-			request.setAttribute("email", user.getEmail());
+			request.setAttribute(MappingUtility.PARAM_USER_LOGIN, user.getLogin());
+			request.setAttribute(MappingUtility.PARAM_USER_NAME, user.getName());
+			request.setAttribute(MappingUtility.PARAM_USER_PHONE, user.getPhone());
+			request.setAttribute(MappingUtility.PARAM_USER_EMAIL, user.getEmail());
 		}
 	}
 

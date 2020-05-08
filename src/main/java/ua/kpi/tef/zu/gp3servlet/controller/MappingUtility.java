@@ -12,9 +12,8 @@ import java.util.regex.Pattern;
  */
 public class MappingUtility {
 	public static final String DOMAIN = "/repair"; //pom.xml: from tomcat7-maven-plugin configuration
-	public static final String MAPPING = "/app"; //web.xml: front controller serves empty map, everything else is here
+	public static final String MAPPING = "/app"; //web.xml: everything is redirected here via MappingFilter
 	public static final String REDIRECT = "redirect:";
-	public static final String REJECTED_ENTITY = "rejected";
 
 	public static final String C_INDEX = "index";
 	public static final String C_REG = "reg";
@@ -24,11 +23,23 @@ public class MappingUtility {
 	public static final String C_LOBBY = "lobby";
 	public static final String C_USERS = "users";
 
+	//session parameters
+	public static final String REJECTED_ENTITY = "rejected";
+
+	//request parameters
 	public static final String PARAM_LOCALE_SWITCH = "l";
 	public static final String PARAM_ACCESS_DENIED = "denied";
 	public static final String PARAM_GENERIC_ERROR = "error";
+	public static final String PARAM_DUPLICATE_DATA = "duplicate";
 	public static final String PARAM_LOGOUT_OK = "logout";
 	public static final String PARAM_REG_OK = "reg";
+
+	//request parameters AND page attributes
+	public static final String PARAM_USER_LOGIN = "login";
+	public static final String PARAM_USER_NAME = "name";
+	public static final String PARAM_USER_PASSWORD = "password";
+	public static final String PARAM_USER_PHONE = "phone";
+	public static final String PARAM_USER_EMAIL = "email";
 
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",
@@ -94,8 +105,8 @@ public class MappingUtility {
 	public static boolean needsRemap(String path) {
 		return pathNotInServletDirectory(path) &&
 				Arrays.stream(ALLOWED_URL_ROOT_TOKENS)
-				.filter(path::matches)
-				.noneMatch(ut -> true);
+						.filter(path::matches)
+						.noneMatch(ut -> true);
 	}
 
 	public static boolean pathNotInServletDirectory(String path) {

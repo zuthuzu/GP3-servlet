@@ -1,5 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.repository.impl;
 
+import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
@@ -21,15 +22,15 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public void create(User entity) {
-		//TODO transactional hibernate_sequence read into entity.id
-		//insert(entity);
+	public void create(User entity) throws DatabaseException {
+		entity.setId(JDBCSequenceTracker.getId(connection));
+		insert(entity);
 	}
 
-	private void insert(User entity) {
+	private void insert(User entity) throws DatabaseException {
 		try (PreparedStatement ps = connection.prepareStatement
 				("INSERT INTO `" + TABLE + "` (`id`, `login`, `name`, `role`, `email`, `phone`, `password`, " +
-						"`accountNonExpired`, `accountNonLocked`, `credentialsNonExpired`, `enabled`" +
+						"`account_non_expired`, `account_non_locked`, `credentials_non_expired`, `enabled`)" +
 						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setInt(1, entity.getId());
 			ps.setString(2, entity.getLogin());
@@ -43,8 +44,10 @@ public class JDBCUserDao implements UserDao {
 			ps.setBoolean(10, true);
 			ps.setBoolean(11, true);
 			ps.executeUpdate();
-		} catch (Exception ignored) {
-
+		} catch (Exception e) {
+			DatabaseException dbe = new DatabaseException("Couldn't save a user: " + entity, e);
+			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
+			throw dbe;
 		}
 	}
 

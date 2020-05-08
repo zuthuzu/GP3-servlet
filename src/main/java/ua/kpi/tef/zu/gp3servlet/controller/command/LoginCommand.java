@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class LoginCommand implements Command {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginCommand.class);
-	private static final String PARAM_LOGIN = "login";
-	private static final String PARAM_PASSWORD = "password";
 
 	private final UserService userService;
 
@@ -38,8 +36,8 @@ public class LoginCommand implements Command {
 
 	private RoleType attemptLogin(HttpServletRequest request)
 			throws DatabaseException, IllegalArgumentException, SecurityException {
-		String login = request.getParameter(PARAM_LOGIN);
-		String password = request.getParameter(PARAM_PASSWORD);
+		String login = request.getParameter(MappingUtility.PARAM_USER_LOGIN);
+		String password = request.getParameter(MappingUtility.PARAM_USER_PASSWORD);
 
 		checkLogin(login);
 		checkAlreadyLoggedIn(request, login);
