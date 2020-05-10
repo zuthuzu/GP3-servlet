@@ -25,6 +25,7 @@ public class JDBCSequenceTracker {
 				id = rs.getInt(COLUMN);
 				log.debug("Got ID from sequence table: " + id);
 				ps.execute("UPDATE " + TABLE + " SET " + COLUMN + "=" + (id+1) + "");
+				connection.commit();
 			}
 
 			connection.setAutoCommit(true);
