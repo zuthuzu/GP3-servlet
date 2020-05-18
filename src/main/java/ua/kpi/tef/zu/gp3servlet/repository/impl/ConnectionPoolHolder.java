@@ -34,19 +34,30 @@ public class ConnectionPoolHolder {
 		return dataSource;
 	}
 
+	/** The only required properties
+	 */
 	private static void setProperties(BasicDataSource ds) {
 		try (InputStream input = ConnectionPoolHolder.class.getClassLoader().getResourceAsStream(PROPERTIES)) {
 			Properties prop = new Properties();
 			prop.load(input);
-			ds.setUrl(prop.getProperty(DB_URL));
-			ds.setUsername(prop.getProperty(DB_USER));
-			ds.setPassword(prop.getProperty(DB_PWD));
-			ds.setMinIdle(getIntProperty(prop, DB_IDLE_MIN, 5));
-			ds.setMaxIdle(getIntProperty(prop, DB_IDLE_MAX, 10));
-			ds.setMaxOpenPreparedStatements(getIntProperty(prop, DB_PREP_MAX, 100));
+			setMandatoryProperties(ds, prop);
+			setAdditionalProperties(ds, prop);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static void setMandatoryProperties(BasicDataSource ds, Properties prop) {
+		ds.setUrl(prop.getProperty(DB_URL));
+		ds.setUsername(prop.getProperty(DB_USER));
+		ds.setPassword(prop.getProperty(DB_PWD));
+	}
+
+	private static void setAdditionalProperties(BasicDataSource ds, Properties prop) {
+		ds.setMinIdle(getIntProperty(prop, DB_IDLE_MIN, 1));
+		ds.setMaxIdle(getIntProperty(prop, DB_IDLE_MAX, 10));
+		ds.setMaxOpenPreparedStatements(getIntProperty(prop, DB_PREP_MAX, 100));
+		ds.setAutoCommitOnReturn(true);
 	}
 
 	private static int getIntProperty(Properties prop, String name, int defaultValue) {

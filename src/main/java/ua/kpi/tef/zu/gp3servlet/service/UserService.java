@@ -19,9 +19,29 @@ public class UserService {
 	private static final String DEFAULT_EMAIL_DOMAIN = "@null";
 
 	public User findByLogin(String login) throws DatabaseException {
-		DaoFactory factory = DaoFactory.getInstance();
-		UserDao dao = factory.createUserDao();
-		return dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
+		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+			return dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
+	}
+
+	public void updateRole(String login, String role) throws DatabaseException, IllegalArgumentException {
+		if (login.equals(SYSADMIN)) throw new IllegalArgumentException("Attempt to modify a protected user");
+		RoleType actualRole = RoleType.valueOf(role); //also throws IllegalArgumentException
+		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+			User user = dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
+			if (user.getRole() == actualRole) return;
+			user.setRole(actualRole);
+			saveUser(user);
+			log.info("User " + user.getLogin() + " updated successfully. Role is now " + user.getRole());
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
 	}
 
 	public void saveNewUser(User frontUser) throws DatabaseException {
@@ -41,10 +61,16 @@ public class UserService {
 	}
 
 	private void saveUser(User user) throws DatabaseException {
-		//throw new DatabaseException("Saving is under construction, unable to save a user: " + user);
-		DaoFactory factory = DaoFactory.getInstance();
+		/*DaoFactory factory = DaoFactory.getInstance();
 		UserDao dao = factory.createUserDao();
-		dao.create(user);
+		dao.create(user);*/
+		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+			dao.create(user);
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
 	}
 
 	public String cleanPhoneNumber(String rawNumber) {
