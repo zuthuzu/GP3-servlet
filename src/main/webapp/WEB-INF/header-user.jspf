@@ -1,0 +1,35 @@
+<%@ page pageEncoding="UTF-8"%>
+    <div class="row bg-light">
+        <div class="col-sm-8">
+            <a class="text-dark" href="${pageContext.request.contextPath}/"><h1><fmt:message key="header.brand" /></h1></a>
+        </div>
+        <div class="col p-2 d-flex justify-content-end">
+            <div class="dropdown show">
+                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <fmt:message key="header.language" />
+                </button>
+
+                <div class="dropdown-menu">
+                    <c:forEach items="${supported}" var="current">
+                        <a class="dropdown-item" href="?l=${current.code}">${current.name}</a>
+                    </c:forEach>
+                </div>
+            </div>
+
+            <div class="p-2">
+
+            </div>
+
+            <div class="dropdown show">
+                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <fmt:message key="general.hello" /> ${user.name}
+                </button>
+
+                <div class="dropdown-menu">
+                    <div class="dropdown-item">
+                        <a href="${pageContext.request.contextPath}/logout"><fmt:message key="header.logout" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

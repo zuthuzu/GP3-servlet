@@ -13,11 +13,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class LoginCommand implements Command {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(LoginCommand.class);
-
 	private final UserService userService;
 
 	public LoginCommand() {
 		userService = new UserService();
+	}
+
+	public LoginCommand(UserService userService) {
+		this.userService = userService;
 	}
 
 	@Override

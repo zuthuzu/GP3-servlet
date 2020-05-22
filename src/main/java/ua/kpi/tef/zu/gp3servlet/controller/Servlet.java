@@ -16,11 +16,9 @@ import java.util.*;
  */
 public class Servlet extends HttpServlet {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Servlet.class);
-	private final Map<String, Command> commands = new HashMap<>();
 
 	public void init(ServletConfig servletConfig) {
 		UserSecurity.initializeLoggedUsers(servletConfig.getServletContext());
-		MappingUtility.initializeCommands(commands);
 	}
 
 	@Override
@@ -40,9 +38,7 @@ public class Servlet extends HttpServlet {
 			return;
 		}
 
-		path = MappingUtility.digCommandFromURI(path);
-		log.debug("MAIN: raw URI: " + request.getRequestURI() + " -> sanitized command from URI: " + path);
-		Command command = commands.getOrDefault(path, commands.get(MappingUtility.C_INDEX));
+		Command command = MappingUtility.getCommand(path);
 		String page = command.execute(request);
 		request.getRequestDispatcher(page).forward(request, response);
 	}
