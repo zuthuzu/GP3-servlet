@@ -15,14 +15,14 @@ public class JDBCSequenceTracker {
 	private static final String TABLE = "hibernate_sequence";
 	private static final String COLUMN = "next_val";
 
-	public static int getId(Connection connection) throws DatabaseException {
-		int id = 0;
+	public static long getId(Connection connection) throws DatabaseException {
+		long id = 0L;
 		try (Statement ps = connection.createStatement()) {
 			connection.setAutoCommit(false);
 
 			ResultSet rs = ps.executeQuery("SELECT "+ COLUMN + " FROM " + TABLE);
 			if (rs.next()) {
-				id = rs.getInt(COLUMN);
+				id = rs.getLong(COLUMN);
 				log.debug("Got ID from sequence table: " + id);
 				ps.execute("UPDATE " + TABLE + " SET " + COLUMN + "=" + (id+1) + "");
 				connection.commit();

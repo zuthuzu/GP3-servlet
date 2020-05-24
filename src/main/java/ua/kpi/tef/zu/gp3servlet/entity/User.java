@@ -4,7 +4,7 @@ package ua.kpi.tef.zu.gp3servlet.entity;
  * Created by Anton Domin on 2020-04-16
  */
 public class User {
-	private int id;
+	private long id;
 	private String login;
 	private String name;
 	private RoleType role;
@@ -16,11 +16,11 @@ public class User {
 	public User() {
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -86,7 +86,7 @@ public class User {
 	}
 
 	public static class Builder {
-		private int id;
+		private long id;
 		private String login;
 		private String name;
 		private RoleType role;
@@ -94,7 +94,7 @@ public class User {
 		private String phone;
 		private String password;
 
-		public Builder id(int i) {
+		public Builder id(long i) {
 			this.id = i;
 			return this;
 		}
@@ -138,13 +138,13 @@ public class User {
 		return new Builder();
 	}
 
-	public User(Builder b) {
-		this.id = b.id;
-		this.login = b.login;
-		this.name = b.name;
-		this.role = b.role;
-		this.email = b.email;
-		this.phone = b.phone;
-		this.password = b.password;
+	public User(Builder builder) {
+		this.id = builder.id;
+		this.login = builder.login;
+		this.name = builder.name;
+		this.role = builder.role;
+		this.email = builder.email;
+		this.phone = builder.phone;
+		this.password = builder.password;
 	}
 }

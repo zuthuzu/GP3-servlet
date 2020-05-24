@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.repository.impl;
 
 import ua.kpi.tef.zu.gp3servlet.repository.DaoFactory;
+import ua.kpi.tef.zu.gp3servlet.repository.OrderDao;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
 
 import javax.sql.DataSource;
@@ -16,6 +17,11 @@ public class JDBCDaoFactory extends DaoFactory {
 	@Override
 	public UserDao createUserDao() {
 		return new JDBCUserDao(getConnection());
+	}
+
+	@Override
+	public OrderDao createOrderDao() {
+		return new JDBCOrderDao(getConnection());
 	}
 
 	private Connection getConnection() {

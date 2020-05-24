@@ -5,9 +5,9 @@ import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,11 +29,12 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	private void insert(User entity) throws DatabaseException {
-		try (PreparedStatement ps = connection.prepareStatement
-				("INSERT INTO `" + TABLE + "` (`id`, `login`, `name`, `role`, `email`, `phone`, `password`, " +
-						"`account_non_expired`, `account_non_locked`, `credentials_non_expired`, `enabled`)" +
-						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-			ps.setInt(1, entity.getId());
+		String query = "INSERT INTO `" + TABLE + "` (`id`, `login`, `name`, `role`, `email`, `phone`, `password`, " +
+				"`account_non_expired`, `account_non_locked`, `credentials_non_expired`, `enabled`) " +
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
+			ps.setLong(1, entity.getId());
 			ps.setString(2, entity.getLogin());
 			ps.setString(3, entity.getName());
 			ps.setString(4, entity.getRole().toString());
@@ -53,19 +54,19 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public Optional<User> findById(int id) {
+	public Optional<User> findById(long id) {
 		return Optional.empty();
 	}
 
 	@Override
 	public Optional<User> findByLogin(String login) {
 		User entity = null;
-		try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM `" + TABLE + "` WHERE login=?")) {
+		String query = "SELECT * FROM `" + TABLE + "` WHERE login=?";
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				entity = extractFromResultSet(rs);
-			}
+			if (rs.next()) entity = extractFromResultSet(rs);
 		} catch (Exception ignored) {
 
 		}
@@ -73,13 +74,18 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
+	public List<User> findByLoginIn(Collection<String> logins) {
+		return new ArrayList<>();
+	}
+
+	@Override
 	public List<User> findAll() {
 		return new ArrayList<>();
 	}
 
-	private User extractFromResultSet(ResultSet rs) throws SQLException {
+	private User extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
 		return User.builder()
-				.id(rs.getInt("id"))
+				.id(rs.getLong("id"))
 				.login(rs.getString("login"))
 				.name(rs.getString("name"))
 				.role(RoleType.valueOf(rs.getString("role")))

@@ -23,6 +23,10 @@ public class MappingUtility {
 	public static final String C_LOGOUT = "logout";
 	public static final String C_LOBBY = "lobby";
 	public static final String C_USERS = "users";
+	public static final String C_ORDER = "order";
+	public static final String C_ORDER_NEW = "neworder";
+	public static final String C_ORDER_UPD = "updateorder";
+	public static final String C_USER_ROLE = "setrole";
 
 	//session parameters
 	public static final String REJECTED_ENTITY = "rejected";
@@ -60,42 +64,30 @@ public class MappingUtility {
 
 	private static final Map<RoleType, Set<String>> allowedCommands = new HashMap<>();
 
+	//global role/command permissions
 	static {
 		allowedCommands.put(null, //GUEST
 				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_REG, C_NEW_USER, C_LOGIN)));
 		allowedCommands.put(RoleType.ROLE_USER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER, C_ORDER_NEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_MANAGER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER, C_ORDER_NEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_MASTER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER, C_ORDER_NEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_ADMIN,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_USERS, C_LOGOUT)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_USERS, C_LOGOUT, C_USER_ROLE)));
 	}
 
-	public static Command getCommand(String path) {
-		String commandName = digCommandFromURI(path);
-		switch (commandName) {
-			case C_INDEX:
-				return new IndexCommand();
-			case C_REG:
-				return new RegistrationCommand();
-			case C_NEW_USER:
-				return new NewUserCommand();
-			case C_LOGIN:
-				return new LoginCommand();
-			case C_LOGOUT:
-				return new LogoutCommand();
-			case C_LOBBY:
-				return new LobbyCommand();
-			case C_USERS:
-				return new UsersCommand();
-			//TODO proper error mapping, one way or another
-			case "error":
-				new ErrorCommand();
-			default:
-				return new IndexCommand();
-		}
+	public static void initializeCommands(Map<String, Command> commands) {
+		commands.put(C_INDEX, new IndexCommand());
+		commands.put(C_REG, new RegistrationCommand());
+		commands.put(C_NEW_USER, new NewUserCommand());
+		commands.put(C_LOGIN, new LoginCommand());
+		commands.put(C_LOGOUT, new LogoutCommand());
+		commands.put(C_LOBBY, new LobbyCommand());
+		commands.put(C_USERS, new UsersCommand());
+		//TODO proper error mapping, one way or another
+		commands.put("error", new ErrorCommand());
 	}
 
 	public static boolean canAccess(RoleType role, String path) {

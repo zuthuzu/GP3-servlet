@@ -8,13 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by Anton Domin on 2020-04-16
  */
 public class LocalizationFilter implements Filter {
-	private static final String CURRENT_LANGUAGE = "locale";
-	private static final String SUPPORTED_LANGUAGES = "supported";
+	public static final String SUPPORTED_LANGUAGES = "supported";
+	public static final String CURRENT_LANGUAGE = "locale";
+
 
 	@Override
 	public void init(FilterConfig filterConfig) {

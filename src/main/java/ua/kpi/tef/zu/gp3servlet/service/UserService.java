@@ -61,9 +61,6 @@ public class UserService {
 	}
 
 	private void saveUser(User user) throws DatabaseException {
-		/*DaoFactory factory = DaoFactory.getInstance();
-		UserDao dao = factory.createUserDao();
-		dao.create(user);*/
 		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
 			dao.create(user);
 		} catch (DatabaseException e) {

@@ -1,5 +1,8 @@
 package ua.kpi.tef.zu.gp3servlet.controller;
 
+import ua.kpi.tef.zu.gp3servlet.controller.filters.LocalizationFilter;
+
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -25,6 +28,15 @@ public enum SupportedLanguages {
 
 	public String getName() {
 		return name;
+	}
+
+	public static Locale determineLocale(HttpSession session) {
+		try {
+			String langCode = (String) session.getAttribute(LocalizationFilter.CURRENT_LANGUAGE);
+			return determineLocale(langCode);
+		} catch (Exception e) {
+			return determineLocale(getDefault());
+		}
 	}
 
 	public static Locale determineLocale(String code) {

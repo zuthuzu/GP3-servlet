@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public interface GenericDao<T> extends AutoCloseable{
 	void create (T entity) throws DatabaseException;
-	Optional<T> findById(int id) throws DatabaseException;
+	Optional<T> findById(long id) throws DatabaseException;
 	List<T> findAll() throws DatabaseException;
 	void update(T entity) throws DatabaseException;
 	void delete(int id) throws DatabaseException;
