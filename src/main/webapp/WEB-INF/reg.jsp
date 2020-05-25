@@ -38,7 +38,7 @@
             <fmt:message key="reg.header" />
             <br /><br />
             <div>
-                <form id="newUser" name="newUser" action="${pageContext.request.contextPath}/app/newuser" method="post">
+                <form id="newUser" name="newUser" action="${pageContext.request.contextPath}/newuser" method="post">
                     <div class="form-group">
                         <label for="name">
                             <fmt:message key="reg.name" />

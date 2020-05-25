@@ -1,11 +1,13 @@
 package ua.kpi.tef.zu.gp3servlet.service;
 
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
+import ua.kpi.tef.zu.gp3servlet.controller.LocalizationUtility;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.ArchiveOrder;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.entity.WorkOrder;
+import ua.kpi.tef.zu.gp3servlet.entity.states.AbstractState;
 import ua.kpi.tef.zu.gp3servlet.entity.states.OrderStatus;
 import ua.kpi.tef.zu.gp3servlet.entity.states.StateFactory;
 import ua.kpi.tef.zu.gp3servlet.repository.DaoFactory;
@@ -13,16 +15,14 @@ import ua.kpi.tef.zu.gp3servlet.repository.OrderDao;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 
 /**
  * Created by Anton Domin on 2020-05-20
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class OrderService {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderService.class);
-	private static final String BUNDLE_NAME = "messages";
 
 	private final Map<RoleType, OrderListCommand> orderListMap = new HashMap<>();
 
@@ -46,7 +46,8 @@ public class OrderService {
 	public List<OrderDTO> getActiveOrders(User initiator, Locale locale) throws DatabaseException {
 		OrderListCommand command = orderListMap.get(initiator.getRole());
 		if (command == null) return new ArrayList<>();
-		else return setLocalFields(wrapWorkCollectionInDTO(command.getActiveOrders(initiator)), locale);
+		else return LocalizationUtility.setLocalFields(
+				wrapWorkCollectionInDTO(command.getActiveOrders(initiator)), locale);
 	}
 
 	/**
@@ -63,7 +64,87 @@ public class OrderService {
 	public List<OrderDTO> getSecondaryOrders(User initiator, Locale locale) throws DatabaseException {
 		OrderListCommand command = orderListMap.get(initiator.getRole());
 		if (command == null) return new ArrayList<>();
-		else return setLocalFields(wrapWorkCollectionInDTO(command.getSecondaryOrders(initiator)), locale);
+		else return LocalizationUtility.setLocalFields(
+				wrapWorkCollectionInDTO(command.getSecondaryOrders(initiator)), locale);
+	}
+
+	/**
+	 * Primary logic that invokes the order state mechanism.<br />
+	 * Preparation and support for state change.<br />
+	 * Verifies data retrieved from front end, then passes it to the primary logic.
+	 *
+	 * @param modelOrder order the way it arrived from frontend, + initiator (user who calls it)
+	 */
+	public void updateOrder(OrderDTO modelOrder) throws DatabaseException, IllegalArgumentException {
+		OrderDTO dbOrder = getOrderById(modelOrder.getId());
+		AbstractState state = dbOrder.getLiveState();
+		state.verifyRequest(modelOrder);
+		state.processOrder(this, state.assembleOrder(dbOrder, modelOrder));
+	}
+
+	public OrderDTO getOrderById(String id) throws DatabaseException, IllegalArgumentException {
+		long realID;
+		try {
+			realID = Long.parseLong(id);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Can't convert ID " + id + " to a number.");
+		}
+		return getOrderById(realID);
+	}
+
+	public OrderDTO getOrderById(long id) throws DatabaseException, IllegalArgumentException {
+		WorkOrder order;
+		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+			order = dao.findById(id).orElseThrow(() ->
+					new IllegalArgumentException("Can't find order with ID " + id));
+		} catch (IllegalArgumentException | DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
+
+		return wrapOrderInDTO(order, getUserCache(Arrays.asList(order)));
+	}
+
+	public void archiveOrder(OrderDTO order) throws DatabaseException {
+		//transactions.archiveOrder(unwrapFullOrder(order));
+		log.info("Order archived: " + order.toStringSkipEmpty());
+	}
+
+	public void saveNewOrder(OrderDTO order) throws DatabaseException {
+		saveOrder(unwrapNewOrder(order));
+		log.info("New order created: " + order.toStringSkipEmpty());
+	}
+
+	public void saveExistingOrder(OrderDTO order) throws DatabaseException {
+		saveOrder(unwrapFullOrder(order));
+		log.info((order.getActualStatus().isArchived() ? "Archived order updated: " : "Order updated: ") +
+				order.toStringSkipEmpty());
+	}
+
+	private void saveOrder(WorkOrder order) throws DatabaseException {
+		OrderStatus status = order.getStatus();
+		if (status.isArchived()) {
+			ArchiveOrder archiveOrder;
+
+			try {
+				archiveOrder = (ArchiveOrder) order;
+			} catch (ClassCastException e) {
+				throw new DatabaseException("Bad order downcast: " + order);
+			}
+
+			try {
+				//archiveRepo.save(archiveOrder);
+			} catch (Exception e) {
+				throw new DatabaseException("Couldn't save an order: " + order, e);
+			}
+		} else {
+			try {
+				//orderRepo.save(order);
+			} catch (Exception e) {
+				throw new DatabaseException("Couldn't save an order: " + order, e);
+			}
+		}
 	}
 
 	private List<OrderDTO> wrapWorkCollectionInDTO(List<? extends WorkOrder> entities) {
@@ -157,23 +238,5 @@ public class OrderService {
 		result.setManagerComment(order.getManagerComment());
 		result.setMasterComment(order.getMasterComment());
 		return result;
-	}
-
-	public List<OrderDTO> setLocalFields(List<OrderDTO> orders, Locale locale) {
-		orders.forEach((o) -> setLocalFields(o, locale));
-		return orders;
-	}
-
-	public void setLocalFields(OrderDTO order, Locale locale) {
-		DateTimeFormatter dtf = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
-		order.setCreationDate(order.getActualCreationDate().format(dtf));
-
-		ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-		order.setCategory(getLocalizedText(bundle, order.getActualCategory().toString()));
-		order.setStatus(getLocalizedText(bundle, order.getActualStatus().toString()));
-	}
-
-	private String getLocalizedText(ResourceBundle bundle, String token) {
-		return bundle.keySet().contains(token) ? bundle.getString(token) : token;
 	}
 }

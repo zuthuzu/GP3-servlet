@@ -58,7 +58,7 @@
                 </thead>
                 <tbody>
                 <c:forEach items="${activeOrders}" var="order">
-                <tr>
+                <tr onclick="window.location.href='${pageContext.request.contextPath}/details?id=${order.id}'">
                     <td>${order.creationDate}</td>
                     <td>${order.item}</td>
                     <td>${order.status}</td>
@@ -88,7 +88,7 @@
                 </thead>
                 <tbody>
                 <c:forEach items="${secondaryOrders}" var="order">
-                <tr>
+                <tr onclick="window.location.href='${pageContext.request.contextPath}/details?id=${order.id}'">
                     <td>${order.creationDate}</td>
                     <td>${order.item}</td>
                     <td>${order.status}</td>

@@ -71,11 +71,11 @@ public abstract class AbstractState {
 	}
 
 	public void processOrder(OrderService service, OrderDTO order) throws DatabaseException {
-		/*if (moveToArchive(order.proceed())) {
+		if (moveToArchive(order.proceed())) {
 			service.archiveOrder(order);
 		} else {
 			service.saveExistingOrder(order);
-		}*/
+		}
 	}
 
 	/**
