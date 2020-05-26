@@ -48,7 +48,7 @@
                     <div class="form-group">
                         <label for="complaint"><fmt:message key="order.complaint" /></label>
                         <textarea class="form-control" id="complaint" name="complaint" placeholder="<fmt:message key="order.complaint" />"
-                        required value="${complaint}"></textarea>
+                        required>${complaint}</textarea>
                     </div>
                     <div>
                         <input class="btn btn-secondary" type="submit" value="<fmt:message key="order.new.submit" />">

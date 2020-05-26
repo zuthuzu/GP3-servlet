@@ -3,6 +3,7 @@ package ua.kpi.tef.zu.gp3servlet.repository.impl;
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
+import ua.kpi.tef.zu.gp3servlet.entity.WorkOrder;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Anton Domin on 2020-04-16
@@ -74,8 +76,20 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public List<User> findByLoginIn(Collection<String> logins) {
-		return new ArrayList<>();
+	public List<User> findByLoginIn(Collection<String> logins) throws DatabaseException {
+		List<User> result = new ArrayList<>();
+		String query = "SELECT * FROM `" + TABLE + "` WHERE login IN (?)";
+		String filter = logins.stream()
+				.collect(Collectors.joining("','", "('", "')"));
+		query = query.replace("(?)", filter);
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) result.add(extractFromResultSet(rs));
+		} catch (Exception e) {
+			throw new DatabaseException("Couldn't select users by login pool: " + e.toString(), e);
+		}
+		return result;
 	}
 
 	@Override

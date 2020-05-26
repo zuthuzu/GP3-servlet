@@ -63,6 +63,15 @@ public class OrderDetailsCommand implements Command {
 		request.setAttribute(MappingUtility.PARAM_ORDER_ITEM, order.getItem());
 		request.setAttribute(MappingUtility.PARAM_ORDER_CATEGORY, order.getCategory());
 		request.setAttribute(MappingUtility.PARAM_ORDER_COMPLAINT, order.getComplaint());
+		request.setAttribute("creation_date", order.getCreationDate());
 		request.setAttribute("status", order.getStatus());
+		request.setAttribute("author", order.getAuthor());
+		request.setAttribute("manager", order.getManager());
+		request.setAttribute("master", order.getMaster());
+		request.setAttribute("manager_comment", order.getManagerComment());
+		request.setAttribute("master_comment", order.getMasterComment());
+		request.setAttribute("price", order.getPrice());
+		request.setAttribute("user_stars", order.getMasterComment());
+		request.setAttribute("user_comment", order.getMasterComment());
 	}
 }

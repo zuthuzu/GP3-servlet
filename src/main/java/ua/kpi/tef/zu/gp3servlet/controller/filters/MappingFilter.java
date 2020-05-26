@@ -33,7 +33,7 @@ public class MappingFilter implements Filter {
 			path = path.replace(MappingUtility.DOMAIN,
 					MappingUtility.DOMAIN + MappingUtility.MAPPING) + (query == null ? "" : "?" + query);
 			resp.sendRedirect(path);
-			log.debug("MAP: remapped to " + path);
+			//log.debug("MAP: remapped to " + path);
 		} else {
 			filterChain.doFilter(servletRequest, servletResponse);
 		}

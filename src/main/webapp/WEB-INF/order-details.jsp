@@ -66,8 +66,7 @@
                     <div class="form-group">
                         <label for="complaint"><fmt:message key="order.complaint" /></label>
                         <textarea class="form-control" id="complaint" name="complaint" placeholder="<fmt:message key="order.complaint" />"
-                        rows="2" value="${complaint}" <c:if test="${!available.contains('complaint')}">disabled</c:if>>
-                        </textarea>
+                        rows="2"<c:if test="${!available.contains('complaint')}">disabled</c:if>>${complaint}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="status"><fmt:message key="order.price" /></label>
@@ -81,15 +80,13 @@
                     </div>
                     <div class="form-group">
                         <label for="managerComment"><fmt:message key="order.manager_comment" /></label>
-                        <textarea class="form-control" id="managerComment" name="managerComment" rows="2" value="${manager_comment}"
-                        <c:if test="${!available.contains('manager_comment')}">disabled</c:if>>
-                        </textarea>
+                        <textarea class="form-control" id="managerComment" name="managerComment" rows="2"
+                        <c:if test="${!available.contains('manager_comment')}">disabled</c:if>>${manager_comment}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="masterComment"><fmt:message key="order.master_comment" /></label>
-                        <textarea class="form-control" id="masterComment" name="masterComment" rows="2" value="${master_comment}"
-                        <c:if test="${!available.contains('master_comment')}">disabled</c:if>>
-                        </textarea>
+                        <textarea class="form-control" id="masterComment" name="masterComment" rows="2"
+                        <c:if test="${!available.contains('master_comment')}">disabled</c:if>>${master_comment}</textarea>
                     </div>
                     <c:if test="${archived}">
                     <div class="form-group">
@@ -117,8 +114,8 @@
                     </div>
                     <div class="form-group">
                         <label for="userComment"><fmt:message key="order.user_comment" /></label>
-                        <textarea class="form-control" id="userComment" name="userComment" rows="2" value="${user_comment}">
-                        </textarea>
+                        <textarea class="form-control" id="userComment" name="userComment" rows="2"
+                        <c:if test="${!available.contains('user_comment')}">disabled</c:if>>${user_comment}</textarea>
                     </div>
                     </c:if>
                     <div>
