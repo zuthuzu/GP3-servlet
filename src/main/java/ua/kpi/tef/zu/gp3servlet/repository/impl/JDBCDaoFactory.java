@@ -24,6 +24,11 @@ public class JDBCDaoFactory extends DaoFactory {
 		return new JDBCOrderDao(getConnection());
 	}
 
+	@Override
+	public OrderDao createArchiveDao() {
+		return new JDBCOrderDao(getConnection());
+	}
+
 	private Connection getConnection() {
 		try {
 			return dataSource.getConnection();

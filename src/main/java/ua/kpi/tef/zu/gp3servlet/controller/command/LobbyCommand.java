@@ -1,8 +1,9 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
-import ua.kpi.tef.zu.gp3servlet.controller.SupportedLanguages;
+import ua.kpi.tef.zu.gp3servlet.controller.LocalizationUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
+import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.service.OrderService;
 
@@ -28,7 +29,9 @@ public class LobbyCommand implements Command {
 	@Override
 	public String execute(HttpServletRequest request) {
 		User currentUser = UserSecurity.getCurrentUser(request.getSession());
-		Locale locale = SupportedLanguages.determineLocale(request.getSession());
+		Locale locale = LocalizationUtility.determineLocale(request.getSession());
+
+		request.setAttribute("canPlaceNew", currentUser.getRole() == RoleType.ROLE_USER);
 
 		try {
 			request.setAttribute("activeOrders", orderService.getActiveOrders(currentUser, locale));

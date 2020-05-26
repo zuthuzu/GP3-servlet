@@ -30,15 +30,6 @@ public enum SupportedLanguages {
 		return name;
 	}
 
-	public static Locale determineLocale(HttpSession session) {
-		try {
-			String langCode = (String) session.getAttribute(LocalizationFilter.CURRENT_LANGUAGE);
-			return determineLocale(langCode);
-		} catch (Exception e) {
-			return determineLocale(getDefault());
-		}
-	}
-
 	public static Locale determineLocale(String code) {
 		String codeLC = code.toLowerCase();
 		return determineLocale(Arrays.stream(SupportedLanguages.values())

@@ -47,10 +47,10 @@ public class JDBCOrderDao implements OrderDao {
 			ps.setString(9, entity.getMasterComment());
 			ps.setString(10, entity.getStatus().name());
 			ps.setInt(11, entity.getPrice());
-			ps.setDate(12, java.sql.Date.valueOf(java.time.LocalDate.now()));
+			ps.setDate(12, java.sql.Date.valueOf(entity.getCreationDate()));
 			ps.executeUpdate();
 		} catch (Exception e) {
-			DatabaseException dbe = new DatabaseException("Couldn't save an order: " + entity, e);
+			DatabaseException dbe = new DatabaseException("Couldn't create an order: " + entity, e);
 			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
 			throw dbe;
 		}

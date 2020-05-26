@@ -1,9 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
-import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.controller.LocalizationUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
-import ua.kpi.tef.zu.gp3servlet.controller.SupportedLanguages;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.states.AbstractState;
@@ -16,21 +14,21 @@ import java.util.Locale;
 /**
  * Created by Anton Domin on 2020-05-25
  */
-public class ViewOrderCommand implements Command {
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ViewOrderCommand.class);
+public class OrderDetailsCommand implements Command {
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderDetailsCommand.class);
 	private final OrderService orderService;
 
-	public ViewOrderCommand() {
+	public OrderDetailsCommand() {
 		orderService = new OrderService();
 	}
 
-	public ViewOrderCommand(OrderService orderService) {
+	public OrderDetailsCommand(OrderService orderService) {
 		this.orderService = orderService;
 	}
 
 	@Override
 	public String execute(HttpServletRequest request) {
-		Locale locale = SupportedLanguages.determineLocale(request.getSession());
+		Locale locale = LocalizationUtility.determineLocale(request.getSession());
 
 		OrderDTO order;
 		try {
@@ -42,7 +40,7 @@ public class ViewOrderCommand implements Command {
 					+ MappingUtility.PARAM_ACCESS_DENIED;
 		}
 
-		request.setAttribute("categories", LocalizationUtility.getLocalCategories(locale));
+		request.setAttribute(MappingUtility.PARAM_ORDER_CATEGORIES, LocalizationUtility.getLocalCategories(locale));
 		setOrderAttributes(request, order);
 
 		AbstractState state = order.getLiveState();
@@ -62,8 +60,9 @@ public class ViewOrderCommand implements Command {
 	}
 
 	private void setOrderAttributes(HttpServletRequest request, OrderDTO order) {
-		request.setAttribute("category", order.getCategory());
-		request.setAttribute("item", order.getItem());
+		request.setAttribute(MappingUtility.PARAM_ORDER_ITEM, order.getItem());
+		request.setAttribute(MappingUtility.PARAM_ORDER_CATEGORY, order.getCategory());
+		request.setAttribute(MappingUtility.PARAM_ORDER_COMPLAINT, order.getComplaint());
 		request.setAttribute("status", order.getStatus());
 	}
 }

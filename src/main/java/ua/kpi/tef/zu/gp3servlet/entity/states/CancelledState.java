@@ -1,5 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.entity.states;
 
+import org.apache.commons.lang3.StringUtils;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 
@@ -22,7 +23,7 @@ public class CancelledState extends AbstractState {
 
 	@Override
 	public void applyAvailableFields(OrderDTO to, OrderDTO from) {
-		to.setUserComment(!isEmptyOrNull(from.getUserComment()) ? from.getUserComment() : to.getUserComment());
+		to.setUserComment(!StringUtils.isEmpty(from.getUserComment()) ? from.getUserComment() : to.getUserComment());
 		to.setUserStars(from.getUserStars());
 	}
 }

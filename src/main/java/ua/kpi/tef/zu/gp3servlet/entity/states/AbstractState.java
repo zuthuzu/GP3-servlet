@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.entity.states;
 
 
+import org.apache.commons.lang3.StringUtils;
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
@@ -49,13 +50,13 @@ public abstract class AbstractState {
 					}
 					break;
 				case "manager_comment":
-					if (isEmptyOrNull(from.getManagerComment())) {
+					if (StringUtils.isEmpty(from.getManagerComment())) {
 						throw new IllegalArgumentException("Incomplete data: missing manager comment in update request: "
 								+ from.toStringSkipEmpty());
 					}
 					break;
 				case "master_comment":
-					if (isEmptyOrNull(from.getMasterComment())) {
+					if (StringUtils.isEmpty(from.getMasterComment())) {
 						throw new IllegalArgumentException("Incomplete data: missing master comment in update request: "
 								+ from.toStringSkipEmpty());
 					}
@@ -86,9 +87,9 @@ public abstract class AbstractState {
 	 * @return an entity ready for updating into DB
 	 */
 	public OrderDTO assembleOrder(OrderDTO dbOrder, OrderDTO modelOrder) {
-		dbOrder.setManagerLogin((requiredRole == RoleType.ROLE_MANAGER && isEmptyOrNull(dbOrder.getManagerLogin()))
+		dbOrder.setManagerLogin((requiredRole == RoleType.ROLE_MANAGER && StringUtils.isEmpty(dbOrder.getManagerLogin()))
 				? modelOrder.getInitiator().getLogin() : dbOrder.getManagerLogin()); //first authorised initiator gets recorded
-		dbOrder.setMasterLogin((requiredRole == RoleType.ROLE_MASTER && isEmptyOrNull(dbOrder.getMasterLogin()))
+		dbOrder.setMasterLogin((requiredRole == RoleType.ROLE_MASTER && StringUtils.isEmpty(dbOrder.getMasterLogin()))
 				? modelOrder.getInitiator().getLogin() : dbOrder.getMasterLogin()); //first authorised initiator gets recorded
 
 		dbOrder.setAction(modelOrder.getAction());
@@ -108,14 +109,6 @@ public abstract class AbstractState {
 	public boolean moveToArchive(boolean proceed) {
 		if (!proceed && isCancelable) return true;
 		return proceed && nextState.isArchived() && !currentState.isArchived();
-	}
-
-	/**
-	 * As far as I can tell, there's no native way to check for it in java.<br /><br />
-	 * Apache Commons has StringUtils.isEmpty(value), but I don't want to include it here.
-	 */
-	public boolean isEmptyOrNull(String value) {
-		return value == null || value.isEmpty();
 	}
 
 	//only boilerplate getters and setters below

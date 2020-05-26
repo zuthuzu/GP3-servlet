@@ -37,13 +37,13 @@
         </div>
     </div>
 
-    <div class="row bg-light">
+    <c:if test="${canPlaceNew}"><div class="row bg-light">
         <div class="col">
             <h3><fmt:message key="lobby.welcome" /></h3>
             📥 <a href="${pageContext.request.contextPath}/order"><fmt:message key="lobby.order.place" /></a>
             <br /><br />
         </div>
-    </div>
+    </div></c:if>
 
     <div class="row bg-light">
         <div class="col">

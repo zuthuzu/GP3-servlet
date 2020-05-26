@@ -36,7 +36,7 @@ public class NewUserCommand implements Command {
 			userService.saveNewUser(user);
 			return MappingUtility.getRedirectToDefault(null) + "?" + MappingUtility.PARAM_REG_OK;
 		} catch (DatabaseException e) {
-			log.error("EXCEPTION: " + e.getMessage());
+			log.error(e.getMessage());
 			request.getSession().setAttribute(MappingUtility.REJECTED_ENTITY, user);
 			return MappingUtility.REDIRECT + MappingUtility.C_REG + "?" +
 					(e.isDuplicate() ? MappingUtility.PARAM_DUPLICATE_DATA : MappingUtility.PARAM_GENERIC_ERROR);

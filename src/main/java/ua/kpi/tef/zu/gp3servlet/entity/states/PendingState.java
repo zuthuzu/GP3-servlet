@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.entity.states;
 
 
+import org.apache.commons.lang3.StringUtils;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 
@@ -25,8 +26,8 @@ public class PendingState extends AbstractState {
 	@Override
 	public void applyAvailableFields(OrderDTO to, OrderDTO from) {
 		to.setActualCategory(from.getActualCategory() != null ? from.getActualCategory() : to.getActualCategory());
-		to.setItem(!isEmptyOrNull(from.getItem()) ? from.getItem() : to.getItem());
-		to.setManagerComment(!isEmptyOrNull(from.getManagerComment()) ? from.getManagerComment() : to.getManagerComment());
+		to.setItem(!StringUtils.isEmpty(from.getItem()) ? from.getItem() : to.getItem());
+		to.setManagerComment(!StringUtils.isEmpty(from.getManagerComment()) ? from.getManagerComment() : to.getManagerComment());
 		to.setPrice(from.getPrice());
 	}
 }

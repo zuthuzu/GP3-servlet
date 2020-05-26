@@ -26,7 +26,7 @@
         <div class="col">
             <h3><fmt:message key="order.details.welcome" /></h3>
             <div>
-                <form id="updateOrder" name="updateOrder" action="${pageContext.request.contextPath}/updateorder" method="post">
+                <form id="updateOrder" name="updateOrder" action="${pageContext.request.contextPath}/app/updateorder" method="post">
                     <input type="hidden" id="id" name="id" value="${id}">
                     <input type="hidden" id="archived" name="archived" value="${archived}">
                     <div class="form-group">

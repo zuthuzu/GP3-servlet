@@ -23,6 +23,7 @@ public class MappingUtility {
 	public static final String C_LOGOUT = "logout";
 	public static final String C_LOBBY = "lobby";
 	public static final String C_USERS = "users";
+	public static final String C_ORDER = "order";
 	public static final String C_ORDER_VIEW = "details";
 	public static final String C_ORDER_NEW = "neworder";
 	public static final String C_ORDER_UPD = "updateorder";
@@ -48,6 +49,11 @@ public class MappingUtility {
 	public static final String PARAM_USER_PHONE = "phone";
 	public static final String PARAM_USER_EMAIL = "email";
 
+	public static final String PARAM_ORDER_CATEGORIES = "categories";
+	public static final String PARAM_ORDER_ITEM = "item";
+	public static final String PARAM_ORDER_CATEGORY = "category";
+	public static final String PARAM_ORDER_COMPLAINT = "complaint";
+
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",
 			".*" + DOMAIN,
@@ -70,11 +76,11 @@ public class MappingUtility {
 		allowedCommands.put(null, //GUEST
 				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_REG, C_NEW_USER, C_LOGIN)));
 		allowedCommands.put(RoleType.ROLE_USER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER_VIEW, C_ORDER_NEW, C_ORDER_UPD)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER, C_ORDER_VIEW, C_ORDER_NEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_MANAGER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER_VIEW, C_ORDER_NEW, C_ORDER_UPD)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER, C_ORDER_VIEW, C_ORDER_NEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_MASTER,
-				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER_VIEW, C_ORDER_NEW, C_ORDER_UPD)));
+				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_LOBBY, C_LOGOUT, C_ORDER_VIEW, C_ORDER_UPD)));
 		allowedCommands.put(RoleType.ROLE_ADMIN,
 				new HashSet<>(Arrays.asList(C_BLANK, C_INDEX, C_USERS, C_LOGOUT, C_USER_ROLE)));
 	}
@@ -87,7 +93,8 @@ public class MappingUtility {
 		commands.put(C_LOGOUT, new LogoutCommand());
 		commands.put(C_LOBBY, new LobbyCommand());
 		commands.put(C_USERS, new UsersCommand());
-		commands.put(C_ORDER_VIEW, new ViewOrderCommand());
+		commands.put(C_ORDER, new OrderCommand());
+		commands.put(C_ORDER_VIEW, new OrderDetailsCommand());
 		commands.put(C_ORDER_NEW, new NewOrderCommand());
 		commands.put(C_ORDER_UPD, new UpdateOrderCommand());
 		commands.put(C_USER_ROLE, new UserRoleCommand());

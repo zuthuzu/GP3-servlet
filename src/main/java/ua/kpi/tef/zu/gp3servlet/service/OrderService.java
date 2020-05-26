@@ -112,7 +112,13 @@ public class OrderService {
 	}
 
 	public void saveNewOrder(OrderDTO order) throws DatabaseException {
-		saveOrder(unwrapNewOrder(order));
+		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+			dao.create(unwrapNewOrder(order));
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
 		log.info("New order created: " + order.toStringSkipEmpty());
 	}
 
@@ -126,23 +132,26 @@ public class OrderService {
 		OrderStatus status = order.getStatus();
 		if (status.isArchived()) {
 			ArchiveOrder archiveOrder;
-
 			try {
 				archiveOrder = (ArchiveOrder) order;
 			} catch (ClassCastException e) {
 				throw new DatabaseException("Bad order downcast: " + order);
 			}
 
-			try {
-				//archiveRepo.save(archiveOrder);
+			try (OrderDao dao = DaoFactory.getInstance().createArchiveDao()) {
+				dao.update(archiveOrder);
+			} catch (DatabaseException e) {
+				throw e;
 			} catch (Exception e) {
-				throw new DatabaseException("Couldn't save an order: " + order, e);
+				throw new DatabaseException("Failed to connect to database", e);
 			}
 		} else {
-			try {
-				//orderRepo.save(order);
+			try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+				dao.update(order);
+			} catch (DatabaseException e) {
+				throw e;
 			} catch (Exception e) {
-				throw new DatabaseException("Couldn't save an order: " + order, e);
+				throw new DatabaseException("Failed to connect to database", e);
 			}
 		}
 	}
