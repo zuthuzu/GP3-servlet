@@ -21,6 +21,10 @@ public class NewUserCommand implements Command {
 		userService = new UserService();
 	}
 
+	public NewUserCommand(UserService userService) {
+		this.userService = userService;
+	}
+
 	@Override
 	public String execute(HttpServletRequest request) {
 		User user = getUserFromRequest(request);
@@ -34,6 +38,7 @@ public class NewUserCommand implements Command {
 
 		try {
 			userService.saveNewUser(user);
+			//TODO denull
 			return MappingUtility.getRedirectToDefault(null) + "?" + MappingUtility.PARAM_REG_OK;
 		} catch (DatabaseException e) {
 			log.error(e.getMessage());

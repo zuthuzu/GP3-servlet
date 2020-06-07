@@ -45,6 +45,7 @@ public class OrderService {
 	 */
 	public List<OrderDTO> getActiveOrders(User initiator, Locale locale) throws DatabaseException {
 		OrderListCommand command = orderListMap.get(initiator.getRole());
+		//TODO denull
 		if (command == null) return new ArrayList<>();
 		else return LocalizationUtility.setLocalFields(
 				wrapWorkCollectionInDTO(command.getActiveOrders(initiator)), locale);
@@ -63,6 +64,7 @@ public class OrderService {
 	 */
 	public List<OrderDTO> getSecondaryOrders(User initiator, Locale locale) throws DatabaseException {
 		OrderListCommand command = orderListMap.get(initiator.getRole());
+		//TODO denull
 		if (command == null) return new ArrayList<>();
 		else return LocalizationUtility.setLocalFields(
 				wrapWorkCollectionInDTO(command.getSecondaryOrders(initiator)), locale);

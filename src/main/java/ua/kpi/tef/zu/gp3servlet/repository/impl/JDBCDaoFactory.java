@@ -26,7 +26,7 @@ public class JDBCDaoFactory extends DaoFactory {
 
 	@Override
 	public OrderDao createArchiveDao() {
-		return new JDBCOrderDao(getConnection());
+		return new JDBCArchiveDao(getConnection());
 	}
 
 	private Connection getConnection() {

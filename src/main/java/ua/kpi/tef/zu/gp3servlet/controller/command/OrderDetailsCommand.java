@@ -60,18 +60,19 @@ public class OrderDetailsCommand implements Command {
 	}
 
 	private void setOrderAttributes(HttpServletRequest request, OrderDTO order) {
+		request.setAttribute(MappingUtility.PARAM_ORDER_ID, order.getId());
 		request.setAttribute(MappingUtility.PARAM_ORDER_ITEM, order.getItem());
 		request.setAttribute(MappingUtility.PARAM_ORDER_CATEGORY, order.getCategory());
 		request.setAttribute(MappingUtility.PARAM_ORDER_COMPLAINT, order.getComplaint());
-		request.setAttribute("creation_date", order.getCreationDate());
-		request.setAttribute("status", order.getStatus());
-		request.setAttribute("author", order.getAuthor());
-		request.setAttribute("manager", order.getManager());
-		request.setAttribute("master", order.getMaster());
-		request.setAttribute("manager_comment", order.getManagerComment());
-		request.setAttribute("master_comment", order.getMasterComment());
-		request.setAttribute("price", order.getPrice());
-		request.setAttribute("user_stars", order.getMasterComment());
-		request.setAttribute("user_comment", order.getMasterComment());
+		request.setAttribute(MappingUtility.PARAM_ORDER_DATE, order.getCreationDate());
+		request.setAttribute(MappingUtility.PARAM_ORDER_STATUS, order.getStatus());
+		request.setAttribute(MappingUtility.PARAM_ORDER_AUTHOR, order.getAuthor());
+		request.setAttribute(MappingUtility.PARAM_ORDER_MANAGER, order.getManager());
+		request.setAttribute(MappingUtility.PARAM_ORDER_MASTER, order.getMaster());
+		request.setAttribute(MappingUtility.PARAM_ORDER_MANAGER_COMMENT, order.getManagerComment());
+		request.setAttribute(MappingUtility.PARAM_ORDER_MASTER_COMMENT, order.getMasterComment());
+		request.setAttribute(MappingUtility.PARAM_ORDER_PRICE, order.getPrice());
+		request.setAttribute(MappingUtility.PARAM_ORDER_USER_RATING, order.getUserStars());
+		request.setAttribute(MappingUtility.PARAM_ORDER_USER_COMMENT, order.getUserComment());
 	}
 }

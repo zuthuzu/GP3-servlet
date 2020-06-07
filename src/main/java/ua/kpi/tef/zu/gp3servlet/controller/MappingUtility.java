@@ -49,10 +49,21 @@ public class MappingUtility {
 	public static final String PARAM_USER_PHONE = "phone";
 	public static final String PARAM_USER_EMAIL = "email";
 
+	public static final String PARAM_ORDER_ID = "id";
 	public static final String PARAM_ORDER_CATEGORIES = "categories";
 	public static final String PARAM_ORDER_ITEM = "item";
 	public static final String PARAM_ORDER_CATEGORY = "category";
 	public static final String PARAM_ORDER_COMPLAINT = "complaint";
+	public static final String PARAM_ORDER_DATE = "creation_date";
+	public static final String PARAM_ORDER_STATUS = "status";
+	public static final String PARAM_ORDER_AUTHOR = "author";
+	public static final String PARAM_ORDER_MANAGER = "manager";
+	public static final String PARAM_ORDER_MASTER = "master";
+	public static final String PARAM_ORDER_MANAGER_COMMENT = "manager_comment";
+	public static final String PARAM_ORDER_MASTER_COMMENT = "master_comment";
+	public static final String PARAM_ORDER_PRICE = "price";
+	public static final String PARAM_ORDER_USER_RATING = "user_stars";
+	public static final String PARAM_ORDER_USER_COMMENT = "user_comment";
 
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",

@@ -31,7 +31,7 @@ public class JDBCOrderDao implements OrderDao {
 		insert(entity);
 	}
 
-	private void insert(WorkOrder entity) throws DatabaseException {
+	protected void insert(WorkOrder entity) throws DatabaseException {
 		try (PreparedStatement ps = connection.prepareStatement
 				("INSERT INTO `" + TABLE + "` (`id`, `author`, `category`, `complaint`, `item`," +
 						"`manager`, `manager_comment`, `master`, `master_comment`, `status`, `price`, `creation_date`)" +
@@ -77,8 +77,27 @@ public class JDBCOrderDao implements OrderDao {
 	}
 
 	@Override
-	public void update(WorkOrder entity) {
-
+	public void update(WorkOrder entity) throws DatabaseException {
+		try (PreparedStatement ps = connection.prepareStatement
+				("UPDATE `" + TABLE + "` SET category = ?, complaint = ?, item = ?, " +
+						"manager = ?, manager_comment = ?, master = ?, master_comment = ?, status = ?, price = ? " +
+						" WHERE id = ?")) {
+			ps.setString(1, entity.getCategory().name());
+			ps.setString(2, entity.getComplaint());
+			ps.setString(3, entity.getItem());
+			ps.setString(4, entity.getManager());
+			ps.setString(5, entity.getManagerComment());
+			ps.setString(6, entity.getMaster());
+			ps.setString(7, entity.getMasterComment());
+			ps.setString(8, entity.getStatus().name());
+			ps.setInt(9, entity.getPrice());
+			ps.setLong(10, entity.getId());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			DatabaseException dbe = new DatabaseException("Couldn't update an order: " + entity, e);
+			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
+			throw dbe;
+		}
 	}
 
 	@Override

@@ -45,7 +45,7 @@ public class NewOrderCommand implements Command {
 		}
 	}
 
-	private OrderDTO getOrderFromRequest(HttpServletRequest request) throws IllegalArgumentException {
+	private OrderDTO getOrderFromRequest(HttpServletRequest request) {
 		OrderDTO order = OrderDTO.builder()
 				.item(request.getParameter(MappingUtility.PARAM_ORDER_ITEM))
 				.category(request.getParameter(MappingUtility.PARAM_ORDER_CATEGORY))
