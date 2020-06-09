@@ -14,7 +14,6 @@ import java.util.Optional;
  */
 public class NewUserCommand implements Command {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NewUserCommand.class);
-
 	private final UserService userService;
 
 	public NewUserCommand() {

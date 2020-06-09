@@ -8,7 +8,7 @@ import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.repository.DaoFactory;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Anton Domin on 2020-04-16
@@ -28,14 +28,23 @@ public class UserService {
 		}
 	}
 
-	public void updateRole(String login, String role) throws DatabaseException, IllegalArgumentException {
+	public List<User> findAll() throws DatabaseException {
+		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+			return dao.findAll();
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
+	}
+
+	public void updateRole(String login, RoleType role) throws DatabaseException, IllegalArgumentException {
 		if (login.equals(SYSADMIN)) throw new IllegalArgumentException("Attempt to modify a protected user");
-		RoleType actualRole = RoleType.valueOf(role); //also throws IllegalArgumentException
 		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
 			User user = dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
-			if (user.getRole() == actualRole) return;
-			user.setRole(actualRole);
-			saveUser(user);
+			if (user.getRole() == role) return;
+			user.setRole(role);
+			dao.update(user);
 			log.info("User " + user.getLogin() + " updated successfully. Role is now " + user.getRole());
 		} catch (DatabaseException e) {
 			throw e;
@@ -56,11 +65,11 @@ public class UserService {
 				.password(encoder.encode(frontUser.getPassword()))
 				.build();
 
-		saveUser(completeUser);
+		createUser(completeUser);
 		log.info("New user created: " + completeUser);
 	}
 
-	private void saveUser(User user) throws DatabaseException {
+	private void createUser(User user) throws DatabaseException {
 		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
 			dao.create(user);
 		} catch (DatabaseException e) {

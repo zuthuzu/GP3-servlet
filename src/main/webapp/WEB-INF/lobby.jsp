@@ -80,19 +80,19 @@
             <h3><fmt:message key="lobby.order.secondary" /></h3>
             <table class="table table-hover">
                 <thead>
-                <tr>
-                    <th><fmt:message key="order.creation_date" /></th>
-                    <th><fmt:message key="order.item" /></th>
-                    <th><fmt:message key="order.status" /></th>
-                </tr>
+                    <tr>
+                        <th><fmt:message key="order.creation_date" /></th>
+                        <th><fmt:message key="order.item" /></th>
+                        <th><fmt:message key="order.status" /></th>
+                    </tr>
                 </thead>
                 <tbody>
                 <c:forEach items="${secondaryOrders}" var="order">
-                <tr onclick="window.location.href='${pageContext.request.contextPath}/details?id=${order.id}'">
-                    <td>${order.creationDate}</td>
-                    <td>${order.item}</td>
-                    <td>${order.status}</td>
-                </tr>
+                    <tr onclick="window.location.href='${pageContext.request.contextPath}/details?id=${order.id}'">
+                        <td>${order.creationDate}</td>
+                        <td>${order.item}</td>
+                        <td>${order.status}</td>
+                    </tr>
                 </c:forEach>
                 </tbody>
             </table>

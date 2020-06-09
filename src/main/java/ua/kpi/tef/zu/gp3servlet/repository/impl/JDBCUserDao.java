@@ -93,8 +93,17 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public List<User> findAll() {
-		return new ArrayList<>();
+	public List<User> findAll() throws DatabaseException {
+		List<User> result = new ArrayList<>();
+		String query = "SELECT * FROM `" + TABLE + "`";
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) result.add(extractFromResultSet(rs));
+		} catch (Exception e) {
+			throw new DatabaseException("Couldn't select all users: " + e.toString(), e);
+		}
+		return result;
 	}
 
 	private User extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
@@ -110,8 +119,17 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public void update(User entity) {
-
+	public void update(User entity) throws DatabaseException {
+		try (PreparedStatement ps = connection.prepareStatement
+				("UPDATE `" + TABLE + "` SET role = ? WHERE login = ?")) {
+			ps.setString(1, entity.getRole().name());
+			ps.setString(2, entity.getLogin());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			DatabaseException dbe = new DatabaseException("Couldn't update role for user: " + entity, e);
+			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
+			throw dbe;
+		}
 	}
 
 	@Override

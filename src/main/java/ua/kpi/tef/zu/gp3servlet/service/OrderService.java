@@ -178,6 +178,7 @@ public class OrderService {
 			userCache.put(order.getMaster(), "");
 		}
 
+		//is this a good practice? maybe I should call UserService instead?
 		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
 			List<User> userList = dao.findByLoginIn(userCache.keySet());
 			userList.forEach(u -> userCache.put(u.getLogin(), u.getName()));
