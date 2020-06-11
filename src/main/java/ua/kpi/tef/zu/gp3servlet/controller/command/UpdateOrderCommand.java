@@ -52,8 +52,8 @@ public class UpdateOrderCommand implements Command {
 				.price(NumberUtils.toInt(request.getParameter(MappingUtility.PARAM_ORDER_PRICE), 0))
 				.userStars(NumberUtils.toInt(request.getParameter(MappingUtility.PARAM_ORDER_USER_RATING), 0))
 				.userComment(request.getParameter(MappingUtility.PARAM_ORDER_USER_COMMENT))
+				.action(request.getParameter(MappingUtility.PARAM_ORDER_ACTION))
 				.initiator(UserSecurity.getCurrentUser(request.getSession()))
-				.action(OrderDTO.ACTION_PROCEED)
 				.build();
 
 		LocalizationUtility.restoreCategoryFromLocalView(order, LocalizationUtility.determineLocale(request.getSession()));

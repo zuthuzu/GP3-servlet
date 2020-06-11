@@ -2,7 +2,6 @@ package ua.kpi.tef.zu.gp3servlet.repository.impl;
 
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.entity.ItemCategory;
-import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.entity.WorkOrder;
 import ua.kpi.tef.zu.gp3servlet.entity.states.OrderStatus;
 import ua.kpi.tef.zu.gp3servlet.repository.OrderDao;
@@ -25,6 +24,10 @@ public class JDBCOrderDao implements OrderDao {
 		this.connection = connection;
 	}
 
+	protected String getTable() {
+		return TABLE;
+	}
+
 	@Override
 	public void create(WorkOrder entity) throws DatabaseException {
 		entity.setId(JDBCSequenceTracker.getId(connection));
@@ -33,7 +36,7 @@ public class JDBCOrderDao implements OrderDao {
 
 	protected void insert(WorkOrder entity) throws DatabaseException {
 		try (PreparedStatement ps = connection.prepareStatement
-				("INSERT INTO `" + TABLE + "` (`id`, `author`, `category`, `complaint`, `item`," +
+				("INSERT INTO `" + getTable() + "` (`id`, `author`, `category`, `complaint`, `item`," +
 						"`manager`, `manager_comment`, `master`, `master_comment`, `status`, `price`, `creation_date`)" +
 						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			ps.setLong(1, entity.getId());
@@ -47,7 +50,7 @@ public class JDBCOrderDao implements OrderDao {
 			ps.setString(9, entity.getMasterComment());
 			ps.setString(10, entity.getStatus().name());
 			ps.setInt(11, entity.getPrice());
-			ps.setDate(12, java.sql.Date.valueOf(entity.getCreationDate()));
+			ps.setDate(12, Date.valueOf(entity.getCreationDate()));
 			ps.executeUpdate();
 		} catch (Exception e) {
 			DatabaseException dbe = new DatabaseException("Couldn't create an order: " + entity, e);
@@ -59,7 +62,7 @@ public class JDBCOrderDao implements OrderDao {
 	@Override
 	public Optional<WorkOrder> findById(long id) throws DatabaseException {
 		WorkOrder entity = null;
-		String query = "SELECT * FROM `" + TABLE + "` WHERE id=?";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE id=?";
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
 			ps.setLong(1, id);
@@ -79,7 +82,7 @@ public class JDBCOrderDao implements OrderDao {
 	@Override
 	public void update(WorkOrder entity) throws DatabaseException {
 		try (PreparedStatement ps = connection.prepareStatement
-				("UPDATE `" + TABLE + "` SET category = ?, complaint = ?, item = ?, " +
+				("UPDATE `" + getTable() + "` SET category = ?, complaint = ?, item = ?, " +
 						"manager = ?, manager_comment = ?, master = ?, master_comment = ?, status = ?, price = ? " +
 						" WHERE id = ?")) {
 			ps.setString(1, entity.getCategory().name());
@@ -108,7 +111,7 @@ public class JDBCOrderDao implements OrderDao {
 	@Override
 	public List<WorkOrder> findByStatusIn(Collection<OrderStatus> statuses) throws DatabaseException {
 		List<WorkOrder> result = new ArrayList<>();
-		String query = "SELECT * FROM `" + TABLE + "` WHERE status IN (?)";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE status IN (?)";
 		query = putCollectionInQuery(query, statuses);
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -123,7 +126,7 @@ public class JDBCOrderDao implements OrderDao {
 	@Override
 	public List<WorkOrder> findByAuthor(String author) throws DatabaseException {
 		List<WorkOrder> result = new ArrayList<>();
-		String query = "SELECT * FROM `" + TABLE + "` WHERE author=?";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE author=?";
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
 			ps.setString(1, author);
@@ -139,7 +142,7 @@ public class JDBCOrderDao implements OrderDao {
 	public List<WorkOrder> findByAuthorAndStatusIn(String author, Collection<OrderStatus> statuses)
 			throws DatabaseException {
 		List<WorkOrder> result = new ArrayList<>();
-		String query = "SELECT * FROM `" + TABLE + "` WHERE author=? AND status IN (?)";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE author=? AND status IN (?)";
 		query = putCollectionInQuery(query, statuses);
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -161,7 +164,7 @@ public class JDBCOrderDao implements OrderDao {
 	public List<WorkOrder> findByManagerAndStatusIn(String manager, Collection<OrderStatus> statuses)
 			throws DatabaseException {
 		List<WorkOrder> result = new ArrayList<>();
-		String query = "SELECT * FROM `" + TABLE + "` WHERE manager=? AND status IN (?)";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE manager=? AND status IN (?)";
 		query = putCollectionInQuery(query, statuses);
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -183,7 +186,7 @@ public class JDBCOrderDao implements OrderDao {
 	public List<WorkOrder> findByMasterAndStatusIn(String master, Collection<OrderStatus> statuses)
 			throws DatabaseException {
 		List<WorkOrder> result = new ArrayList<>();
-		String query = "SELECT * FROM `" + TABLE + "` WHERE master=? AND status IN (?)";
+		String query = "SELECT * FROM `" + getTable() + "` WHERE master=? AND status IN (?)";
 		query = putCollectionInQuery(query, statuses);
 
 		try (PreparedStatement ps = connection.prepareStatement(query)) {
@@ -203,7 +206,7 @@ public class JDBCOrderDao implements OrderDao {
 		return query.replace("(?)", filter);
 	}
 
-	private WorkOrder extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
+	protected WorkOrder extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
 		return WorkOrder.builder()
 				.id(rs.getLong("id"))
 				.author(rs.getString("author"))

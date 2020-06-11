@@ -29,8 +29,7 @@ public class OrderListForUser implements OrderListCommand {
 
 	@Override
 	public List<WorkOrder> getSecondaryOrders(User initiator) throws DatabaseException {
-		//TODO this should read from archive, not main table
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = DaoFactory.getInstance().createArchiveDao()) {
 			return dao.findByAuthor(initiator.getLogin());
 		} catch (DatabaseException e) {
 			throw e;

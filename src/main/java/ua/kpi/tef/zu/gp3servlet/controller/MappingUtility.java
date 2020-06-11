@@ -64,6 +64,7 @@ public class MappingUtility {
 	public static final String PARAM_ORDER_PRICE = "price";
 	public static final String PARAM_ORDER_USER_RATING = "user_stars";
 	public static final String PARAM_ORDER_USER_COMMENT = "user_comment";
+	public static final String PARAM_ORDER_ACTION = "action";
 
 	private static final String[] URL_JUNK_TOKENS = new String[]{
 			"redirect:",

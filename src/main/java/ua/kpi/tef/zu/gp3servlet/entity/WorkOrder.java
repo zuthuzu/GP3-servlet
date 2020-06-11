@@ -122,18 +122,18 @@ public class WorkOrder {
 	}
 
 	public static class Builder {
-		private long id;
-		private LocalDate creationDate;
-		private String author;
-		private String manager;
-		private String master;
-		private OrderStatus status;
-		private ItemCategory category;
-		private String item;
-		private String complaint;
-		private int price;
-		private String managerComment;
-		private String masterComment;
+		protected long id;
+		protected LocalDate creationDate;
+		protected String author;
+		protected String manager;
+		protected String master;
+		protected OrderStatus status;
+		protected ItemCategory category;
+		protected String item;
+		protected String complaint;
+		protected int price;
+		protected String managerComment;
+		protected String masterComment;
 
 		public Builder id(long i) {
 			this.id = i;

@@ -22,29 +22,8 @@ public class JDBCArchiveDao extends JDBCOrderDao implements OrderDao  {
 	}
 
 	@Override
-	protected void insert(WorkOrder entity) throws DatabaseException {
-		try (PreparedStatement ps = connection.prepareStatement
-				("INSERT INTO `" + TABLE + "` (`id`, `author`, `category`, `complaint`, `item`," +
-						"`manager`, `manager_comment`, `master`, `master_comment`, `status`, `price`, `creation_date`)" +
-						" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-			ps.setLong(1, entity.getId());
-			ps.setString(2, entity.getAuthor());
-			ps.setString(3, entity.getCategory().name());
-			ps.setString(4, entity.getComplaint());
-			ps.setString(5, entity.getItem());
-			ps.setString(6, entity.getManager());
-			ps.setString(7, entity.getManagerComment());
-			ps.setString(8, entity.getMaster());
-			ps.setString(9, entity.getMasterComment());
-			ps.setString(10, entity.getStatus().name());
-			ps.setInt(11, entity.getPrice());
-			ps.setDate(12, Date.valueOf(entity.getCreationDate()));
-			ps.executeUpdate();
-		} catch (Exception e) {
-			DatabaseException dbe = new DatabaseException("Couldn't create an order: " + entity, e);
-			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
-			throw dbe;
-		}
+	protected String getTable() {
+		return TABLE;
 	}
 
 	@Override
@@ -56,11 +35,23 @@ public class JDBCArchiveDao extends JDBCOrderDao implements OrderDao  {
 			throw new DatabaseException("Bad order downcast: " + entity);
 		}
 
+		try (PreparedStatement ps = connection.prepareStatement
+				("UPDATE `" + TABLE + "` SET user_comment = ?, user_stars = ? WHERE id = ?")) {
+			ps.setString(1, archiveOrder.getUserComment());
+			ps.setInt(2, archiveOrder.getUserStars());
+			ps.setLong(3, archiveOrder.getId());
+			ps.executeUpdate();
+		} catch (Exception e) {
+			DatabaseException dbe = new DatabaseException("Couldn't update an order: " + entity, e);
+			if (e instanceof SQLIntegrityConstraintViolationException) dbe.setDuplicate(true);
+			throw dbe;
+		}
+
 	}
 
-	private WorkOrder extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
-		//TODO archive impl
-		return WorkOrder.builder()
+	@Override
+	protected ArchiveOrder extractFromResultSet(ResultSet rs) throws SQLException, IllegalArgumentException {
+		return ArchiveOrder.builder()
 				.id(rs.getLong("id"))
 				.author(rs.getString("author"))
 				.category(ItemCategory.valueOf(rs.getString("category")))
@@ -73,6 +64,8 @@ public class JDBCArchiveDao extends JDBCOrderDao implements OrderDao  {
 				.price(rs.getInt("price"))
 				.status(OrderStatus.valueOf(rs.getString("status")))
 				.creationDate(rs.getDate("creation_date").toLocalDate())
+				.userComment(rs.getString("user_comment"))
+				.userStars(rs.getInt("user_stars"))
 				.build();
 	}
 }
