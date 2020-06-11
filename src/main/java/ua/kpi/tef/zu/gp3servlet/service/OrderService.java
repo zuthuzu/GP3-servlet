@@ -95,8 +95,18 @@ public class OrderService {
 	}
 
 	public OrderDTO getOrderById(long id) throws DatabaseException, IllegalArgumentException {
+		try {
+			return getOrderById(id, false);
+		} catch (IllegalArgumentException e) {
+			return getOrderById(id, true);
+		}
+	}
+
+	public OrderDTO getOrderById(long id, boolean inArchive) throws DatabaseException, IllegalArgumentException {
 		WorkOrder order;
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = inArchive
+				? DaoFactory.getInstance().createArchiveDao()
+				: DaoFactory.getInstance().createOrderDao()) {
 			order = dao.findById(id).orElseThrow(() ->
 					new IllegalArgumentException("Can't find order with ID " + id));
 		} catch (IllegalArgumentException | DatabaseException e) {

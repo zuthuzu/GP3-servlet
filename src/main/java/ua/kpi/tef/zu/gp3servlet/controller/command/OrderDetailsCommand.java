@@ -1,5 +1,6 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
+import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.controller.LocalizationUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
@@ -28,23 +29,24 @@ public class OrderDetailsCommand implements Command {
 
 	@Override
 	public String execute(HttpServletRequest request) {
-		Locale locale = LocalizationUtility.determineLocale(request.getSession());
-
 		OrderDTO order;
 		try {
 			order = orderService.getOrderById(request.getParameter("id"));
-			LocalizationUtility.setLocalFields(order, locale);
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 			return MappingUtility.getRedirectToDefault(UserSecurity.getCurrentRole(request.getSession())) + "?"
 					+ MappingUtility.PARAM_ACCESS_DENIED;
 		}
 
+		Locale locale = LocalizationUtility.determineLocale(request.getSession());
+		LocalizationUtility.setLocalFields(order, locale);
+
 		request.setAttribute(MappingUtility.PARAM_ORDER_CATEGORIES, LocalizationUtility.getLocalCategories(locale));
 		setOrderAttributes(request, order);
 
 		AbstractState state = order.getLiveState();
 		request.setAttribute("submit", LocalizationUtility.getLocalizedText(state.getButtonText(), locale));
+		request.setAttribute("archived", order.isArchived());
 
 		if (UserSecurity.getCurrentRole(request.getSession()) == order.getLiveState().getRequiredRole()) {
 			request.setAttribute("available", state.getAvailableFields());

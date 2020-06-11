@@ -28,7 +28,8 @@ public class LocalizationUtility {
 	public static void restoreCategoryFromLocalView(OrderDTO order, Locale locale) throws IllegalArgumentException {
 		int categoryIndex = getLocalCategories(locale).indexOf(order.getCategory());
 		if (categoryIndex == -1)
-			throw new IllegalArgumentException("Failed to recognize the category: " + order.getCategory());
+			//throw new IllegalArgumentException("Failed to recognize the category: " + order.getCategory());
+			return;
 		order.setActualCategory(ItemCategory.values()[categoryIndex]);
 	}
 

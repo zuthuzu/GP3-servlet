@@ -79,42 +79,47 @@
                         value="${status}" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="managerComment"><fmt:message key="order.manager_comment" /></label>
-                        <textarea class="form-control" id="managerComment" name="managerComment" rows="2"
+                        <label for="manager_comment"><fmt:message key="order.manager_comment" /></label>
+                        <textarea class="form-control" id="manager_comment" name="manager_comment" rows="2"
                         <c:if test="${!available.contains('manager_comment')}">disabled</c:if>>${manager_comment}</textarea>
                     </div>
                     <div class="form-group">
-                        <label for="masterComment"><fmt:message key="order.master_comment" /></label>
-                        <textarea class="form-control" id="masterComment" name="masterComment" rows="2"
+                        <label for="master_comment"><fmt:message key="order.master_comment" /></label>
+                        <textarea class="form-control" id="master_comment" name="master_comment" rows="2"
                         <c:if test="${!available.contains('master_comment')}">disabled</c:if>>${master_comment}</textarea>
                     </div>
                     <c:if test="${archived}">
                     <div class="form-group">
                         <div><fmt:message key="order.user_stars" /></div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="userStars" id="star1" value="1">
+                            <input class="form-check-input" type="radio" name="user_stars" id="star1" value="1"
+                            <c:if test="${user_stars == 1}">checked</c:if>>
                             <label class="form-check-label" for="star1">1</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="userStars" id="star2" value="2">
+                            <input class="form-check-input" type="radio" name="user_stars" id="star2" value="2"
+                            <c:if test="${user_stars == 2}">checked</c:if>>
                             <label class="form-check-label" for="star2">2</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="userStars" id="star3" value="3">
+                            <input class="form-check-input" type="radio" name="user_stars" id="star3" value="3"
+                            <c:if test="${user_stars == 3}">checked</c:if>>
                             <label class="form-check-label" for="star3">3</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="userStars" id="star4" value="4">
+                            <input class="form-check-input" type="radio" name="user_stars" id="star4" value="4"
+                            <c:if test="${user_stars == 4}">checked</c:if>>
                             <label class="form-check-label" for="star4">4</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="userStars" id="star5" value="5>
+                            <input class="form-check-input" type="radio" name="user_stars" id="star5" value="5"
+                            <c:if test="${user_stars == 5}">checked</c:if>>
                             <label class="form-check-label" for="star5">5</label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="userComment"><fmt:message key="order.user_comment" /></label>
-                        <textarea class="form-control" id="userComment" name="userComment" rows="2"
+                        <label for="user_comment"><fmt:message key="order.user_comment" /></label>
+                        <textarea class="form-control" id="user_comment" name="user_comment" rows="2"
                         <c:if test="${!available.contains('user_comment')}">disabled</c:if>>${user_comment}</textarea>
                     </div>
                     </c:if>
