@@ -36,7 +36,7 @@ public class JDBCArchiveDao extends JDBCOrderDao implements OrderDao  {
 		}
 
 		try (PreparedStatement ps = connection.prepareStatement
-				("UPDATE `" + TABLE + "` SET user_comment = ?, user_stars = ? WHERE id = ?")) {
+				("UPDATE `" + getTable() + "` SET user_comment = ?, user_stars = ? WHERE id = ?")) {
 			ps.setString(1, archiveOrder.getUserComment());
 			ps.setInt(2, archiveOrder.getUserStars());
 			ps.setLong(3, archiveOrder.getId());

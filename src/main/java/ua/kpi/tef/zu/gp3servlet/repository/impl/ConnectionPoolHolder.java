@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.repository.impl;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -54,17 +55,9 @@ public class ConnectionPoolHolder {
 	}
 
 	private static void setAdditionalProperties(BasicDataSource ds, Properties prop) {
-		ds.setMinIdle(getIntProperty(prop, DB_IDLE_MIN, 1));
-		ds.setMaxIdle(getIntProperty(prop, DB_IDLE_MAX, 10));
-		ds.setMaxOpenPreparedStatements(getIntProperty(prop, DB_PREP_MAX, 100));
+		ds.setMinIdle(NumberUtils.toInt(prop.getProperty(DB_IDLE_MIN), 1));
+		ds.setMaxIdle(NumberUtils.toInt(prop.getProperty(DB_IDLE_MAX), 10));
+		ds.setMaxOpenPreparedStatements(NumberUtils.toInt(prop.getProperty(DB_PREP_MAX), 100));
 		ds.setAutoCommitOnReturn(true);
-	}
-
-	private static int getIntProperty(Properties prop, String name, int defaultValue) {
-		try {
-			return Integer.parseInt(prop.getProperty(name));
-		} catch (NumberFormatException e) {
-			return defaultValue;
-		}
 	}
 }

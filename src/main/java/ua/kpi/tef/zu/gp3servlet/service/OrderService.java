@@ -13,6 +13,7 @@ import ua.kpi.tef.zu.gp3servlet.entity.states.StateFactory;
 import ua.kpi.tef.zu.gp3servlet.repository.DaoFactory;
 import ua.kpi.tef.zu.gp3servlet.repository.OrderDao;
 import ua.kpi.tef.zu.gp3servlet.repository.UserDao;
+import ua.kpi.tef.zu.gp3servlet.repository.UtilityDao;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -43,11 +44,10 @@ public class OrderService {
 	 * @param initiator user who initiated the request
 	 * @return list of the orders that satisfy the condition
 	 */
-	public List<OrderDTO> getActiveOrders(User initiator, Locale locale) throws DatabaseException {
-		OrderListCommand command = orderListMap.get(initiator.getRole());
-		//TODO denull
-		if (command == null) return new ArrayList<>();
-		else return LocalizationUtility.setLocalFields(
+	public List<OrderDTO> getActiveOrders(User initiator, Locale locale) throws DatabaseException, IllegalArgumentException {
+		OrderListCommand command = Optional.of(orderListMap.get(initiator.getRole())).orElseThrow(() ->
+				new IllegalArgumentException("No active orders policy for the role: " + initiator.getRole()));
+		return LocalizationUtility.setLocalFields(
 				wrapWorkCollectionInDTO(command.getActiveOrders(initiator)), locale);
 	}
 
@@ -62,11 +62,10 @@ public class OrderService {
 	 * @param initiator user who initiated the request
 	 * @return list of the orders that satisfy the condition
 	 */
-	public List<OrderDTO> getSecondaryOrders(User initiator, Locale locale) throws DatabaseException {
-		OrderListCommand command = orderListMap.get(initiator.getRole());
-		//TODO denull
-		if (command == null) return new ArrayList<>();
-		else return LocalizationUtility.setLocalFields(
+	public List<OrderDTO> getSecondaryOrders(User initiator, Locale locale) throws DatabaseException, IllegalArgumentException {
+		OrderListCommand command = Optional.of(orderListMap.get(initiator.getRole())).orElseThrow(() ->
+				new IllegalArgumentException("No secondary orders policy for the role: " + initiator.getRole()));
+		return LocalizationUtility.setLocalFields(
 				wrapWorkCollectionInDTO(command.getSecondaryOrders(initiator)), locale);
 	}
 
@@ -108,7 +107,7 @@ public class OrderService {
 				? DaoFactory.getInstance().createArchiveDao()
 				: DaoFactory.getInstance().createOrderDao()) {
 			order = dao.findById(id).orElseThrow(() ->
-					new IllegalArgumentException("Can't find order with ID " + id));
+					new IllegalArgumentException("Can't find order with ID=" + id));
 		} catch (IllegalArgumentException | DatabaseException e) {
 			throw e;
 		} catch (Exception e) {
@@ -119,7 +118,13 @@ public class OrderService {
 	}
 
 	public void archiveOrder(OrderDTO order) throws DatabaseException {
-		//transactions.archiveOrder(unwrapFullOrder(order));
+		try (UtilityDao dao = DaoFactory.getInstance().createUtilityDao()) {
+			dao.archiveOrder(unwrapFullOrder(order));
+		} catch (DatabaseException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new DatabaseException("Failed to connect to database", e);
+		}
 		log.info("Order archived: " + order.toStringSkipEmpty());
 	}
 
@@ -192,7 +197,8 @@ public class OrderService {
 		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
 			List<User> userList = dao.findByLoginIn(userCache.keySet());
 			userList.forEach(u -> userCache.put(u.getLogin(), u.getName()));
-		} catch (Exception ignored) {}
+		} catch (Exception ignored) {
+		}
 		return userCache;
 	}
 

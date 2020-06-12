@@ -133,16 +133,12 @@ public class JDBCUserDao implements UserDao {
 	}
 
 	@Override
-	public void delete(int id) {
+	public void delete(long id) {
 
 	}
 
 	@Override
 	public void close() throws Exception {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			throw new Exception(e);
-		}
+		connection.close();
 	}
 }

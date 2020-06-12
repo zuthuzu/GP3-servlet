@@ -19,15 +19,19 @@ public class JDBCSequenceTracker {
 		long id = 0L;
 		try (Statement ps = connection.createStatement()) {
 			connection.setAutoCommit(false);
-
-			ResultSet rs = ps.executeQuery("SELECT "+ COLUMN + " FROM " + TABLE);
-			if (rs.next()) {
-				id = rs.getLong(COLUMN);
-				log.debug("Got ID from sequence table: " + id);
-				ps.execute("UPDATE " + TABLE + " SET " + COLUMN + "=" + (id+1) + "");
-				connection.commit();
+			try {
+				ResultSet rs = ps.executeQuery("SELECT " + COLUMN + " FROM " + TABLE);
+				if (rs.next()) {
+					id = rs.getLong(COLUMN);
+					log.debug("Got ID from sequence table: " + id);
+					ps.execute("UPDATE " + TABLE + " SET " + COLUMN + "=" + (id + 1) + "");
+					connection.commit();
+				}
+			} catch (SQLException e) {
+				connection.rollback();
+				connection.setAutoCommit(true);
+				throw e;
 			}
-
 			connection.setAutoCommit(true);
 		} catch (SQLException e) {
 			throw new DatabaseException("Couldn't get ID from the sequence table", e);

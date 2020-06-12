@@ -34,7 +34,7 @@ public class JDBCOrderDao implements OrderDao {
 		insert(entity);
 	}
 
-	protected void insert(WorkOrder entity) throws DatabaseException {
+	public void insert(WorkOrder entity) throws DatabaseException {
 		try (PreparedStatement ps = connection.prepareStatement
 				("INSERT INTO `" + getTable() + "` (`id`, `author`, `category`, `complaint`, `item`," +
 						"`manager`, `manager_comment`, `master`, `master_comment`, `status`, `price`, `creation_date`)" +
@@ -69,7 +69,7 @@ public class JDBCOrderDao implements OrderDao {
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) entity = extractFromResultSet(rs);
 		} catch (Exception e) {
-			throw new DatabaseException("Couldn't select orders by author: " + e.toString(), e);
+			throw new DatabaseException("Couldn't select orders by ID=" + id + ": " + e.toString(), e);
 		}
 		return Optional.ofNullable(entity);
 	}
@@ -104,8 +104,13 @@ public class JDBCOrderDao implements OrderDao {
 	}
 
 	@Override
-	public void delete(int id) {
-
+	public void delete(long id) throws DatabaseException {
+		try (PreparedStatement ps = connection.prepareStatement("DELETE FROM `" + getTable() + "` WHERE id = ?")) {
+			ps.setLong(1, id);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			throw new DatabaseException("Couldn't delete an order by ID=" + id, e);
+		}
 	}
 
 	@Override
@@ -225,10 +230,6 @@ public class JDBCOrderDao implements OrderDao {
 
 	@Override
 	public void close() throws Exception {
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			throw new Exception(e);
-		}
+		connection.close();
 	}
 }
