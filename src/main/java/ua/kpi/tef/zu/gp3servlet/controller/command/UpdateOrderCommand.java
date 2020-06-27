@@ -7,6 +7,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.service.OrderService;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +19,7 @@ public class UpdateOrderCommand implements Command {
 	private final OrderService orderService;
 
 	public UpdateOrderCommand() {
-		this.orderService = new OrderService();
+		this.orderService = ServiceFactory.getOrderService();
 	}
 
 	public UpdateOrderCommand(OrderService orderService) {

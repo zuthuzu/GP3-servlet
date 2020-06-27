@@ -4,6 +4,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.*;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 import ua.kpi.tef.zu.gp3servlet.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ public class LoginCommand implements Command {
 	private final UserService userService;
 
 	public LoginCommand() {
-		userService = new UserService();
+		userService = ServiceFactory.getUserService();
 	}
 
 	public LoginCommand(UserService userService) {

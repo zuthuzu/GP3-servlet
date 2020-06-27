@@ -6,6 +6,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
 import ua.kpi.tef.zu.gp3servlet.service.OrderService;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class LobbyCommand implements Command {
 	private final OrderService orderService;
 
 	public LobbyCommand() {
-		orderService = new OrderService();
+		orderService = ServiceFactory.getOrderService();
 	}
 
 	public LobbyCommand(OrderService orderService) {

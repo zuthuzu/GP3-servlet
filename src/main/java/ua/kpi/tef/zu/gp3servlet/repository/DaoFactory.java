@@ -16,10 +16,10 @@ public abstract class DaoFactory {
 
 	public abstract UtilityDao createUtilityDao();
 
-	public static DaoFactory getInstance(){
-		if( daoFactory == null ){
-			synchronized (DaoFactory.class){
-				if(daoFactory==null){
+	public static DaoFactory getInstance() {
+		if (daoFactory == null) {
+			synchronized (DaoFactory.class) {
+				if (daoFactory == null) {
 					daoFactory = new JDBCDaoFactory();
 				}
 			}

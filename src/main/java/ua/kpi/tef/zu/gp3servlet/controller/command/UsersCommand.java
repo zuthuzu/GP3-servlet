@@ -1,6 +1,7 @@
 package ua.kpi.tef.zu.gp3servlet.controller.command;
 
 import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 import ua.kpi.tef.zu.gp3servlet.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,7 @@ public class UsersCommand implements Command {
 	private final UserService userService;
 
 	public UsersCommand() {
-		userService = new UserService();
+		userService = ServiceFactory.getUserService();
 	}
 
 	public UsersCommand(UserService userService) {

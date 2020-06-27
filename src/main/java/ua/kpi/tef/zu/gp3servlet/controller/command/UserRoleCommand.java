@@ -5,6 +5,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.entity.RoleType;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 import ua.kpi.tef.zu.gp3servlet.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ public class UserRoleCommand implements Command {
 	private final UserService userService;
 
 	public UserRoleCommand() {
-		userService = new UserService();
+		userService = ServiceFactory.getUserService();
 	}
 
 	public UserRoleCommand(UserService userService) {

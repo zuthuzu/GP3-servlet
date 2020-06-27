@@ -7,6 +7,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.security.UserSecurity;
 import ua.kpi.tef.zu.gp3servlet.dto.OrderDTO;
 import ua.kpi.tef.zu.gp3servlet.entity.states.AbstractState;
 import ua.kpi.tef.zu.gp3servlet.service.OrderService;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -20,7 +21,7 @@ public class OrderDetailsCommand implements Command {
 	private final OrderService orderService;
 
 	public OrderDetailsCommand() {
-		orderService = new OrderService();
+		orderService = ServiceFactory.getOrderService();
 	}
 
 	public OrderDetailsCommand(OrderService orderService) {

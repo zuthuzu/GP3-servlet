@@ -4,6 +4,7 @@ import ua.kpi.tef.zu.gp3servlet.controller.DatabaseException;
 import ua.kpi.tef.zu.gp3servlet.controller.MappingUtility;
 import ua.kpi.tef.zu.gp3servlet.controller.RegistrationValidation;
 import ua.kpi.tef.zu.gp3servlet.entity.User;
+import ua.kpi.tef.zu.gp3servlet.service.ServiceFactory;
 import ua.kpi.tef.zu.gp3servlet.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ public class NewUserCommand implements Command {
 	private final UserService userService;
 
 	public NewUserCommand() {
-		userService = new UserService();
+		userService = ServiceFactory.getUserService();
 	}
 
 	public NewUserCommand(UserService userService) {
@@ -37,7 +38,6 @@ public class NewUserCommand implements Command {
 
 		try {
 			userService.saveNewUser(user);
-			//TODO denull
 			return MappingUtility.getRedirectToDefault(null) + "?" + MappingUtility.PARAM_REG_OK;
 		} catch (DatabaseException e) {
 			log.error(e.getMessage());
