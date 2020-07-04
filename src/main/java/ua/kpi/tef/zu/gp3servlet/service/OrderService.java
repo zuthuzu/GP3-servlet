@@ -25,12 +25,18 @@ import java.util.*;
 public class OrderService {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderService.class);
 
+	private final DaoFactory daoFactory;
 	private final Map<RoleType, OrderListCommand> orderListMap = new HashMap<>();
 
 	public OrderService() {
-		orderListMap.put(RoleType.ROLE_USER, new OrderListForUser());
-		orderListMap.put(RoleType.ROLE_MANAGER, new OrderListForManager());
-		orderListMap.put(RoleType.ROLE_MASTER, new OrderListForMaster());
+		this(DaoFactory.getInstance());
+	}
+
+	public OrderService(DaoFactory daoFactory) {
+		this.daoFactory = daoFactory;
+		orderListMap.put(RoleType.ROLE_USER, new OrderListForUser(daoFactory));
+		orderListMap.put(RoleType.ROLE_MANAGER, new OrderListForManager(daoFactory));
+		orderListMap.put(RoleType.ROLE_MASTER, new OrderListForMaster(daoFactory));
 	}
 
 	/**
@@ -104,8 +110,8 @@ public class OrderService {
 	public OrderDTO getOrderById(long id, boolean inArchive) throws DatabaseException, IllegalArgumentException {
 		WorkOrder order;
 		try (OrderDao dao = inArchive
-				? DaoFactory.getInstance().createArchiveDao()
-				: DaoFactory.getInstance().createOrderDao()) {
+				? daoFactory.createArchiveDao()
+				: daoFactory.createOrderDao()) {
 			order = dao.findById(id).orElseThrow(() ->
 					new IllegalArgumentException("Can't find order with ID=" + id));
 		} catch (IllegalArgumentException | DatabaseException e) {
@@ -118,7 +124,7 @@ public class OrderService {
 	}
 
 	public void archiveOrder(OrderDTO order) throws DatabaseException {
-		try (UtilityDao dao = DaoFactory.getInstance().createUtilityDao()) {
+		try (UtilityDao dao = daoFactory.createUtilityDao()) {
 			dao.archiveOrder(unwrapFullOrder(order));
 		} catch (DatabaseException e) {
 			throw e;
@@ -129,7 +135,7 @@ public class OrderService {
 	}
 
 	public void saveNewOrder(OrderDTO order) throws DatabaseException {
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = daoFactory.createOrderDao()) {
 			dao.create(unwrapNewOrder(order));
 		} catch (DatabaseException e) {
 			throw e;
@@ -155,7 +161,7 @@ public class OrderService {
 				throw new DatabaseException("Bad order downcast: " + order);
 			}
 
-			try (OrderDao dao = DaoFactory.getInstance().createArchiveDao()) {
+			try (OrderDao dao = daoFactory.createArchiveDao()) {
 				dao.update(archiveOrder);
 			} catch (DatabaseException e) {
 				throw e;
@@ -163,7 +169,7 @@ public class OrderService {
 				throw new DatabaseException("Failed to connect to database", e);
 			}
 		} else {
-			try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+			try (OrderDao dao = daoFactory.createOrderDao()) {
 				dao.update(order);
 			} catch (DatabaseException e) {
 				throw e;
@@ -194,7 +200,7 @@ public class OrderService {
 		}
 
 		//is this a good practice? maybe I should call UserService instead?
-		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+		try (UserDao dao = daoFactory.createUserDao()) {
 			List<User> userList = dao.findByLoginIn(userCache.keySet());
 			userList.forEach(u -> userCache.put(u.getLogin(), u.getName()));
 		} catch (Exception ignored) {

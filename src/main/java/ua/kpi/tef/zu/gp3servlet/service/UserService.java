@@ -18,8 +18,18 @@ public class UserService {
 	private static final String SYSADMIN = "admin";
 	private static final String DEFAULT_EMAIL_DOMAIN = "@null";
 
+	private final DaoFactory daoFactory;
+
+	public UserService() {
+		daoFactory = DaoFactory.getInstance();
+	}
+
+	public UserService(DaoFactory daoFactory) {
+		this.daoFactory = daoFactory;
+	}
+
 	public User findByLogin(String login) throws DatabaseException {
-		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+		try (UserDao dao = daoFactory.createUserDao()) {
 			return dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
 		} catch (DatabaseException e) {
 			throw e;
@@ -29,7 +39,7 @@ public class UserService {
 	}
 
 	public List<User> findAll() throws DatabaseException {
-		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+		try (UserDao dao = daoFactory.createUserDao()) {
 			return dao.findAll();
 		} catch (DatabaseException e) {
 			throw e;
@@ -40,7 +50,7 @@ public class UserService {
 
 	public void updateRole(String login, RoleType role) throws DatabaseException, IllegalArgumentException {
 		if (login.equals(SYSADMIN)) throw new IllegalArgumentException("Attempt to modify a protected user");
-		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+		try (UserDao dao = daoFactory.createUserDao()) {
 			User user = dao.findByLogin(login).orElseThrow(() -> new DatabaseException("User not found: " + login));
 			if (user.getRole() == role) return;
 			user.setRole(role);
@@ -70,7 +80,7 @@ public class UserService {
 	}
 
 	private void createUser(User user) throws DatabaseException {
-		try (UserDao dao = DaoFactory.getInstance().createUserDao()) {
+		try (UserDao dao = daoFactory.createUserDao()) {
 			dao.create(user);
 		} catch (DatabaseException e) {
 			throw e;

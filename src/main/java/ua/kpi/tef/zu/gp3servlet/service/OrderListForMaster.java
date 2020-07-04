@@ -15,10 +15,20 @@ import java.util.List;
  */
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class OrderListForMaster implements OrderListCommand {
+	private final DaoFactory daoFactory;
+
+	public OrderListForMaster() {
+		daoFactory = DaoFactory.getInstance();
+	}
+
+	public OrderListForMaster(DaoFactory daoFactory) {
+		this.daoFactory = daoFactory;
+	}
+
 	@Override
 	public List<WorkOrder> getActiveOrders(User initiator) throws DatabaseException {
 		List<OrderStatus> filter;
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = daoFactory.createOrderDao()) {
 			filter = Arrays.asList(OrderStatus.ACCEPTED, OrderStatus.WORKING);
 			return dao.findByMasterAndStatusIn(initiator.getLogin(), filter);
 		} catch (DatabaseException e) {
@@ -31,7 +41,7 @@ public class OrderListForMaster implements OrderListCommand {
 	@Override
 	public List<WorkOrder> getSecondaryOrders(User initiator) throws DatabaseException {
 		List<OrderStatus> filter;
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = daoFactory.createOrderDao()) {
 			filter = Arrays.asList(OrderStatus.ACCEPTED);
 			return dao.findByStatusIn(filter);
 		} catch (DatabaseException e) {

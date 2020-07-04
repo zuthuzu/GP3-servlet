@@ -14,10 +14,20 @@ import java.util.List;
  * Created by Anton Domin on 2020-05-24
  */
 public class OrderListForUser implements OrderListCommand {
+	private final DaoFactory daoFactory;
+
+	public OrderListForUser() {
+		daoFactory = DaoFactory.getInstance();
+	}
+
+	public OrderListForUser(DaoFactory daoFactory) {
+		this.daoFactory = daoFactory;
+	}
+
 	@Override
 	public List<WorkOrder> getActiveOrders(User initiator) throws DatabaseException {
 		List<OrderStatus> filter;
-		try (OrderDao dao = DaoFactory.getInstance().createOrderDao()) {
+		try (OrderDao dao = daoFactory.createOrderDao()) {
 			filter = Arrays.asList(OrderStatus.PENDING, OrderStatus.ACCEPTED, OrderStatus.WORKING, OrderStatus.READY);
 			return dao.findByAuthorAndStatusIn(initiator.getLogin(), filter);
 		} catch (DatabaseException e) {
@@ -29,7 +39,7 @@ public class OrderListForUser implements OrderListCommand {
 
 	@Override
 	public List<WorkOrder> getSecondaryOrders(User initiator) throws DatabaseException {
-		try (OrderDao dao = DaoFactory.getInstance().createArchiveDao()) {
+		try (OrderDao dao = daoFactory.createArchiveDao()) {
 			return dao.findByAuthor(initiator.getLogin());
 		} catch (DatabaseException e) {
 			throw e;
